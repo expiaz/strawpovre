@@ -1,0 +1,7 @@
+Welcome !
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    var token = JSON.parse(localStorage.getItem('strawpovre-token'));
+    var socket = io('127.0.0.1:8000/' + token.poll + '?token=' + token.token);
+</script>
