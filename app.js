@@ -4,6 +4,8 @@ const jwt = require('jsonwebtoken');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 
+const database = require('./src/backend/database');
+
 const config = require('./src/config');
 
 const retreiveToken = request => request.query.token ||

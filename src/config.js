@@ -8,6 +8,12 @@ module.exports = {
     cookie : {
         secret: 'dqzg98g',
         age: 60 * 60 * 1000
-    }
+    },
 
+    database : {
+        host : "localhost",
+        user : "strawpovre",
+        password : "Z-=37^3Jp",
+        database : "strawpovre"
+    }
 };
