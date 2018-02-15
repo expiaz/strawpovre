@@ -1,14 +1,21 @@
-const promisify = (fn) => () => {
-    const args = arguments;
-    return new Promise((resolve, reject) => {
-        fn.apply(null, [... args, (err, res) => {
-            if (err) {
-                reject(err);
-            } else {
-                resolve(res);
-            }
-        }]);
-    });
+/**
+ * wrap a callback function into a promise
+ * @param fn
+ * @return {Function}
+ */
+const promisify = function (fn, to = null) {
+    return function() {
+        const args = arguments;
+        return new Promise(function (resolve, reject) {
+            fn.apply(to, [... args, function (err, res) {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(res);
+                }
+            }]);
+        });
+    }
 }
 
 const log = function() {

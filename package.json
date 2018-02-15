@@ -36,6 +36,7 @@
     "express": "^4.16.2",
     "gulp": "^3.9.1",
     "gulp-sourcemaps": "^2.6.4",
+    "helmet": "^3.11.0",
     "jsonwebtoken": "^8.1.1",
     "md5": "^2.2.1",
     "mysql": "^2.15.0",

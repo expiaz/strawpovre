@@ -1,45 +1,72 @@
 const express = require('express');
+var helmet = require('helmet');
 const socketio = require('socket.io');
 const jwt = require('jsonwebtoken');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 
-const database = require('./src/backend/database');
+const { authenticate } = require('./src/backend/repository');
+const { promisify } = require('./src/utils');
 
 const config = require('./src/config');
+
+const jwtSign = promisify(jwt.sign), jwtVerify = promisify(jwt.verify);
 
 const retreiveToken = request => request.query.token ||
     request.signedCookies && request.signedCookies.token ||
     request.headers['authorization'] || '';
 
+const connected = async request => {
+    const { poll } = request.params;
+    const token = retreiveToken(request);
+    if (token.length) {
+        try {
+            const infos = await jwtVerify(token, config.jwt.secret);
+            if (infos.poll === poll) {
+                return true;
+            }
+            // not connected
+        } catch (e) {
+            // not connected
+            return false;
+        }
+    }
+
+    return false;
+};
+
 const app = express(), io = socketio.listen(app.listen(8000));
 
 app.set('views', path.join(__dirname, '/public'));
 app.set('view engine', 'ejs');
+app.use(helmet());
 app.use(cookieParser(config.cookie.secret));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
 
-app.post('/poll/:poll(\\w{5})', function(request, response) {
+app.post('/poll/:poll(\\w{5})', async function(request, response) {
     const { login, password } = request.body;
     const { poll } = request.params;
+
+    if (await connected(request)) {
+        return response.redirect(request.path);
+    }
 
     console.log(`POST ${request.path} form data :`, request.body);
 
     // verify login / pwd & poll affected & open
-    const valid = function (login, pwd, poll) {
-        return true;
-    }(login, password, poll);
+    const user = await authenticate(login, password);
 
-    if (!valid) {
+    if (!user) {
         return response.json({
             success: false,
         });
     }
 
     jwt.sign({
+        id: user.id,
         login,
-        poll
+        poll,
     }, config.jwt.secret, {
         expiresIn: config.jwt.age,
     }, function (err, token) {

@@ -1,7 +1,12 @@
+-- User
+CREATE USER 'strawpovre'@'localhost' IDENTIFIED BY 'Z-=37^3Jp';
+
 -- Database
-DROP DATABASE IF EXISTS strawpovre_db;
-CREATE DATABASE strawpovre_db;
-USE strawpovre_db;
+DROP DATABASE IF EXISTS strawpovre;
+CREATE DATABASE strawpovre;
+GRANT ALL PRIVILEGES ON strawpovre.* TO 'strawpovre'@'localhost';
+-- Connect with mysql -u strawpovre -p if you want
+USE strawpovre;
 
 -- Tables
 DROP TABLE IF EXISTS student ;

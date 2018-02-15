@@ -1,4 +1,6 @@
 const md5 = require("md5");
+const { query } = require('../database');
+
 class StudentRepository {
     constructor(connection) {
         this._connection = connection;
