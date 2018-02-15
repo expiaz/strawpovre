@@ -2,6 +2,21 @@ Welcome !
 
 <script src="/socket.io/socket.io.js"></script>
 <script>
-    var token = JSON.parse(localStorage.getItem('strawpovre-token'));
-    var socket = io('127.0.0.1:8000/' + token.poll + '?token=' + token.token);
+    var socket = io('127.0.0.1:8000/<%= poll %>?token=<%= token %>');
+
+    // reception d'une question
+    socket.on('question.new', question => {
+        /**
+         * question.question
+         * question.answers
+         */
+    });
+
+    /**
+     * répondre à une question
+     * socket.emit('question.answer', {
+     *      question: question.id,
+     *      answer: 'My answer'
+     * });
+     */
 </script>

@@ -70,6 +70,7 @@ app.get('/poll/:poll(\\w{5})', function (request, response) {
             // asked poll different from logged one
             response.render('login');
         } else {
+            // TODO move connection into creation
             io.of(`/${request.params.poll}`).on('connection', function (socket) {
                 console.log(`socket connected to ${request.params.poll}`);
             });
