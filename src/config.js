@@ -12,8 +12,8 @@ module.exports = {
 
     database : {
         host : "localhost",
-        user : "strawpovre",
+        user : "root",
         password : "Z-=37^3Jp",
-        database : "strawpovre"
+        database : "strawpovre_db"
     }
 };

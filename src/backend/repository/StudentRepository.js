@@ -1,30 +1,22 @@
 const md5 = require("md5");
-const { query } = require('../database');
+const {query} = require('../database');
 
-class StudentRepository {
-    constructor(connection) {
-        this._connection = connection;
-    }
+const getStudent = async (id) =>
+    await query('SELECT * FROM users WHERE id = :id', {id});
 
-    get connection() {
-        return this._connection;
-    }
+const getStudents = async () =>
+    await query('SELECT * FROM users');
 
-    set connection(value) {
-        this._connection = value;
-    }
+//const getStudentsForClass = async(classId) =>
+//    await query('SELECT * FROM users WHERE ');
 
-    authenticateStudent(email, password, callback) {
-        var query = "SELECT * FROM `student` WHERE `email` = " + email + " AND `password` = " + md5(password);
+const authenticateStudent = async (email, password) =>
+    await query('SELECT * FROM users WHERE email = :email AND password = :password', {email, password: md5(password)});
 
-        this.connection.query(query, function (err, rows, fields) {
-            if(err)
-                throw err;
-
-            callback(err, rows);
-        })
-    }
-}
 
 //Export to module.exports (pseudo Singleton)
-module.exports = new StudentRepository();
+module.exports = {
+    getStudent,
+    getStudents,
+    authenticateStudent
+};
