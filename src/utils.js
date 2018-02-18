@@ -1,9 +1,14 @@
+const mysql = require('mysql');
+
 /**
  * wrap a callback function into a promise
  * @param fn
  * @return {Function}
  */
 const promisify = function (fn, to = null) {
+    /**
+     * @return {Promise}
+     */
     return function() {
         const args = arguments;
         return new Promise(function (resolve, reject) {
@@ -24,5 +29,5 @@ const log = function() {
 
 module.exports = {
     promisify,
-    log
+    log,
 };

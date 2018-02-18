@@ -1,13 +1,35 @@
+const { join } = require('path');
+
+const dist = join(__dirname, '../public');
+
 module.exports = {
+
+    express: {
+        view: {
+            directory: dist,
+            engine: 'ejs'
+        },
+        dist
+    },
 
     jwt: {
         secret: 'a=^r"rz425eQ',
         age: 60 * 60
     },
 
-    cookie : {
+    session : {
+        key: 'strawpovre.sid',
         secret: 'dqzg98g',
-        age: 60 * 60 * 1000
+        store: {
+            schema: {
+                tableName: 'sessions',
+                columnNames: {
+                    session_id: 'session_id',
+                    expires: 'expires',
+                    data: 'data'
+                }
+            }
+        }
     },
 
     database : {

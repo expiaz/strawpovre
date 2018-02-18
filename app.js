@@ -1,122 +1,64 @@
 const express = require('express');
-var helmet = require('helmet');
+const helmet = require('helmet');
 const socketio = require('socket.io');
-const jwt = require('jsonwebtoken');
 const path = require('path');
-const cookieParser = require('cookie-parser');
+const passport = require('passport');
 
-const { authenticate } = require('./src/backend/repository');
-const { promisify } = require('./src/utils');
+require('./src/backend/passport');
 
+const { expressSession, socketioSession } = require('./src/backend/session');
+const { pollExists, pollAuth } = require('./src/backend/middleware');
+const { createPoll, destroyPoll } = require('./src/backend/repository');
+const { log } = require('./src/utils');
+const controller = require('./src/backend/controller');
 const config = require('./src/config');
-
-const jwtSign = promisify(jwt.sign), jwtVerify = promisify(jwt.verify);
-
-const retreiveToken = request => request.query.token ||
-    request.signedCookies && request.signedCookies.token ||
-    request.headers['authorization'] || '';
-
-const connected = async request => {
-    const { poll } = request.params;
-    const token = retreiveToken(request);
-    if (token.length) {
-        try {
-            const infos = await jwtVerify(token, config.jwt.secret);
-            if (infos.poll === poll) {
-                return true;
-            }
-            // not connected
-        } catch (e) {
-            // not connected
-            return false;
-        }
-    }
-
-    return false;
-};
 
 const app = express(), io = socketio.listen(app.listen(8000));
 
-app.set('views', path.join(__dirname, '/public'));
-app.set('view engine', 'ejs');
+app.set('views', config.express.view.directory);
+app.set('view engine', config.express.view.engine);
+
 app.use(helmet());
-app.use(cookieParser(config.cookie.secret));
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static('public'));
+app.use(expressSession);
+app.use(passport.initialize());
+app.use(passport.session());
+app.use(express.static(config.express.dist));
 
-app.post('/poll/:poll(\\w{5})', async function(request, response) {
-    const { login, password } = request.body;
-    const { poll } = request.params;
+app.post('/poll/:poll(\\w{5})', pollExists, pollAuth, (req, res) => {
+    const { poll = '' } = req.params;
+    log(`post ${poll} auth ok redirect`);
+    return res.redirect(`/poll/${poll}`);
+});
 
-    if (await connected(request)) {
-        return response.redirect(request.path);
+app.get('/poll/:poll(\\w{5})', pollExists, controller.login, controller.poll);
+
+app.post('/dashboard', passport.authenticate('local', {
+    failureRedirect: '/dashboard',
+    successRedirect: '/dashboard'
+}));
+
+app.get('/dashboard', (req, res, next) => {
+    if (!req.user || !req.user.admin) {
+        return res.render('dashboard-login');
     }
+    return next();
+}, controller.dashboard);
 
-    console.log(`POST ${request.path} form data :`, request.body);
-
-    // verify login / pwd & poll affected & open
-    const user = await authenticate(login, password);
-
-    if (!user) {
-        return response.json({
-            success: false,
-        });
-    }
-
-    jwt.sign({
-        id: user.id,
-        login,
-        poll,
-    }, config.jwt.secret, {
-        expiresIn: config.jwt.age,
-    }, function (err, token) {
-        if (err) {
-            response.json({
-                success: false,
-            });
-        } else {
-            response.cookie('token', token, {
-                maxAge: config.cookie.age,
-                path: request.path,
-                signed: config.cookie.secret,
-                httpOnly: true
-            });
-            response.json({
-                success: true,
-                token: token,
-                poll: poll
-            });
-        }
-    });
+app.get('*', (req, res) => {
+    res.redirect('/dashboard');
 });
 
-app.get('/poll/:poll(\\w{5})', function (request, response) {
-    const token = retreiveToken(request);
-    jwt.verify(token, config.jwt.secret, function (err, infos) {
-        console.log(`GET ${request.path} auth : ${!err}, infos & cookies :`, infos, request.signedCookies);
-        if(err || request.params.poll !== infos.poll) {
-            // asked poll different from logged one
-            response.render('login');
-        } else {
-            // TODO move connection into creation
-            io.of(`/${request.params.poll}`).on('connection', function (socket) {
-                console.log(`socket connected to ${request.params.poll}`);
-            });
-            response.render('poll', {
-                token: token,
-                poll: infos.poll
-            });
-        }
-    });
-});
+io.use(socketioSession);
 
-io.use((socket, next) => {
-    jwt.verify(retreiveToken(socket.handshake), config.jwt.secret, function (err, infos) {
-        console.log(`socket ${socket.handshake.headers.referer}`, !!err, infos);
-        if(err) {
-            next(err);
-        } else {
-            next();
-        }
-    });
-});
+const t = () => {
+    const poll = createPoll(io, 'abcd');
+    log(poll.id);
+    const to = setTimeout(() => {
+        destroyPoll(poll.id);
+        clearTimeout(to);
+        t();
+    }, 15 * 1000);
+}
+
+t();

@@ -5,12 +5,40 @@ const { promisify } = require('../utils');
 
 const connection = mysql.createConnection(config.database);
 
-connection.config.queryFormat = (query, values) => query.replace(/\:(\w+)/g, (_, placeholder) => connection.escape(values[placeholder]));
+/*connection.config.queryFormat = function (query, values) {
+    if (typeof values !== "object") {
+        return query;
+    }
+    return query.replace(/\:(\w+)/g, function (txt, key) {
+        if (values.hasOwnProperty(key)) {
+            return connection.escape(values[key]);
+        }
+        return txt;
+    });
+};*/
 
-connection.connect(function (err) {
-    if (err)
-        throw err;
-});
+const query = promisify(connection.query, connection);
+
+/**
+ *
+ * @param base {String}
+ * @param cond {Object}
+ * @return {Promise}
+ */
+const buildQuery = function (table, fields = ['*'], cond = {}) {
+    let sql = 'SELECT ?? FROM ??';
+    const columns = Array.from(fields) || ['*'];
+    const keys = Object.keys(cond);
+    const values = [];
+    if (keys.length) {
+        sql += ' WHERE ' + keys.map(f => {
+            values.push(f, cond[f]);
+            return `?? = ?`;
+        }).join(' AND ');
+    }
+
+    return query(sql, [columns, table, ... values]);
+};
 
 /*
 use query like :
@@ -27,5 +55,7 @@ function getUser(id) {
  */
 
 module.exports = {
-    query: promisify(connection.query, connection),
+    query,
+    buildQuery,
+    connection,
 };

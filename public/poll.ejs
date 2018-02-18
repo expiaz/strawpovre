@@ -2,7 +2,7 @@ Welcome !
 
 <script src="/socket.io/socket.io.js"></script>
 <script>
-    var socket = io('127.0.0.1:8000/<%= poll %>?token=<%= token %>');
+    var socket = io('/<%= poll.id %>');
 
     // reception d'une question
     socket.on('question.new', question => {
