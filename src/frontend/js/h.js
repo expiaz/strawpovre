@@ -77,7 +77,7 @@ function h(selector, attrs, childs) {
 /**
  * helper to create 'component' like groups of dom nodes
  * @param {Function} component the component to render
- * @param {Object} props arguments for the component
+ * @param {Object|undefined} props arguments for the component
  * @param {HTMLElement[]|HTMLElement|undefined} childs
  */
 function H(component, props, childs){
@@ -89,6 +89,12 @@ function H(component, props, childs){
  */
 var Store = (function () {
 
+    /**
+     *
+     * @param x {*}
+     * @param y {*}
+     * @return {boolean}
+     */
     function is(x, y) {
         if (x === y) {
             return x !== 0 || y !== 0 || 1 / x === 1 / y
@@ -96,50 +102,96 @@ var Store = (function () {
             return x !== x && y !== y
         }
     }
-    function shallowEqual(a,b) {
-        if (is(a, b)) return true;
-        if (typeof a !== 'object' || typeof b !== 'object' || a === null || b === null) return false;
-        for (var key in a) {
-            if (a.hasOwnProperty(key)) {
-                if (!b.hasOwnProperty(key)) {
-                    return false;
-                }
-                var equals = is(a[key], b[key]);
-                if (equals === false) return false;
-            }
-        }
-        return true;
+
+    /**
+     *
+     * @param a {Object}
+     * @param b {Object}
+     * @return {boolean}
+     */
+    function shallowDiff(a,b) {
+        if (is(a, b)) return false;
+        if (typeof a !== 'object' || typeof b !== 'object' || a === null || b === null) return true;
+        if (Object.keys(a).length !== Object.keys(b).length) return true;
+        for (var key in a) if (a.hasOwnProperty(key) && (!b.hasOwnProperty(key) || !is(a[key], b[key]))) return true;
+        return false;
     }
+
+    /**
+     *
+     * @param a {*}
+     * @return {*}
+     */
     function identity(a) {
         return a;
     }
 
+    /**
+     *
+     * @param initialState {Object}
+     * @param reducer {Function}
+     * @constructor
+     */
     function Store(initialState, reducer) {
         this.state = initialState;
         this.reducer = reducer || this.reducer;
+        this.mounted = false;
     }
 
-    Store.prototype.mount = function(root, app) {
+    /**
+     *
+     * @param root {HTMLElement}
+     * @param render {Function}
+     * @return {HTMLElement} the mount point of the app
+     */
+    Store.prototype.mount = function(root, render) {
+        if (this.mounted) {
+            this.unmount();
+        }
         this.root = root;
-        this.app = app;
-        /*this.dispatch('__INIT__');*/
-        this.node = this.app(this.state);
+        this.render = render;
+
+        this.node = render(this.getState());
         root.appendChild(this.node);
+        this.mounted = true;
+
         return this.node;
     };
 
+    /**
+     *
+     */
+    Store.prototype.unmount = function () {
+        while (this.root.firstChild) this.root.removeChild(this.root.firstChild);
+        this.mounted = false;
+    }
+
+    /**
+     *
+     * @param action {String}
+     * @param payload {Object}
+     * @return {Object} the new state
+     */
     Store.prototype.dispatch = function(action, payload) {
-        var newState = this.reducer(this.state, action, payload);
-        console.log('---------- DISPATCH ------------ state & newState', this.state, newState);
-        if (newState !== this.state) {
+        var actualState = this.getState();
+        var newState = this.reducer(actualState, action, payload);
+        console.log('---------- DISPATCH ------------ state & newState', actualState, newState);
+        if (newState !== actualState || shallowDiff(actualState, newState)) {
             this.state = newState;
-            var node = this.app(this.state);
+            var node = this.render(actualState);
             this.root.replaceChild(node, this.node);
             this.node = node;
         }
         return this.state;
     };
 
+    /**
+     *
+     * @param state {Object}
+     * @param action {String}
+     * @param payload {Object}
+     * @return {*}
+     */
     Store.prototype.reducer = function(state, action, payload) {
         switch (action) {
             default:
@@ -147,43 +199,19 @@ var Store = (function () {
         }
     };
 
+    /**
+     *
+     * @param component
+     * @param mapStateToProps
+     * @return {Function}
+     */
     Store.prototype.connect = function(component, mapStateToProps) {
         mapStateToProps = mapStateToProps || identity;
         var self = this;
 
-        var node;
-        var props;
-        var childs;
-/*        var connector = function(newProps, newChildren) {
-            const mergedProps = Object.assign({}, newProps, mapStateToProps(self.getState()));
-            console.log('--------------- ' + component.name + ' ------------- connector');
-            console.log('--------------- ' + component.name + ' ------------- state', self.getState());
-            console.log('--------------- ' + component.name + ' ------------- actual props & childs', props, childs);
-            console.log('--------------- ' + component.name + ' ------------- new props & childs', mergedProps, newChildren);
-            console.log('--------------- ' + component.name + ' ------------- diffs props & childs', !shallowEqual(props, mergedProps), !shallowEqual(childs, newChildren));
-            if (!shallowEqual(props, mergedProps) || !shallowEqual(childs, newChildren)) {
-                console.log('--------------- ' + component.name + ' ------------- trigger rendering');
-                props = mergedProps;
-                childs = newChildren;
-                node = component(props);
-            }
-            return node;
-        };
-        connector.name = 'Connect(' + component.name + ')';*/
-        return function(newProps, newChildren) {
-            const mergedProps = Object.assign({}, newProps, mapStateToProps(self.getState()));
-            console.log('--------------- ' + component.name + ' ------------- connector');
-            console.log('--------------- ' + component.name + ' ------------- state', self.getState());
-            console.log('--------------- ' + component.name + ' ------------- actual props & childs', props, childs);
-            console.log('--------------- ' + component.name + ' ------------- new props & childs', mergedProps, newChildren);
-            console.log('--------------- ' + component.name + ' ------------- diffs props & childs', !shallowEqual(props, mergedProps), !shallowEqual(childs, newChildren));
-            if (!shallowEqual(props, mergedProps) || !shallowEqual(childs, newChildren)) {
-                console.log('--------------- ' + component.name + ' ------------- trigger rendering');
-                props = mergedProps;
-                childs = newChildren;
-                node = component(props);
-            }
-            return node;
+        return function (nextProps, nextChildrens) {
+            const mergedProps = Object.assign({}, nextProps, mapStateToProps(self.getState()));
+            return component(mergedProps, nextChildrens);
         }
     }
 
@@ -191,11 +219,12 @@ var Store = (function () {
         return Object.assign({}, this.state);
     };
 
-    Store.prototype.createComponent = function(component, name) {
-        component.name = name || component.name;
-        return this.connect(component);
-    }
-
     return Store;
 
 })();
+
+export {
+    Store,
+    h,
+    H
+};
