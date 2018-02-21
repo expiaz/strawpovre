@@ -55,7 +55,7 @@ const t = () => {
     const poll = createPoll(io, 'abcd');
     log(poll.id);
     const to = setTimeout(() => {
-        destroyPoll(poll.id);
+        destroyPoll(io, poll);
         clearTimeout(to);
         t();
     }, 15 * 1000);

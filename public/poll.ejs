@@ -4,12 +4,8 @@ Welcome !
 <script>
     var socket = io('/<%= poll.id %>');
 
-    // reception d'une question
-    socket.on('question.new', question => {
-        /**
-         * question.question
-         * question.answers
-         */
+    socket.on('server:poll:join', packet => {
+        console.log(packet);
     });
 
     /**

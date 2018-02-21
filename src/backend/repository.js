@@ -1,10 +1,12 @@
-const md5 = require("md5");
+const md5 = require('md5');
+const uid = require('uid');
 
 const Student = require('./model/Student');
 const Prof = require('./model/Prof');
 const Poll = require('./model/Poll');
 const { query, buildQuery } = require('./database');
-const { deletePoll } = require('./session');
+const { bindSocket } = require('./socket');
+const deletePollSession = require('./session').deletePoll;
 
 const polls = new Map();
 
@@ -17,20 +19,32 @@ const polls = new Map();
  * @return {Poll}
  */
 const createPoll = (io, password, owner = new Prof('root@root.root', 'root', 'root', []), questions = []) => {
-    const poll = new Poll(owner, questions, password, io);
-    polls.set(poll.id, poll);
+    const id = uid(5);
+    const ns = io.of(`/${id}`);
+    const poll = new Poll(id, owner, questions, password, ns);
+    bindSocket(ns, poll);
+    polls.set(id, poll);
     return poll;
 };
 
 /**
  *
- * @param poll
+ * @param io
+ * @param poll {Poll}
  * @return {Promise}
  */
-const destroyPoll = poll => getPoll(poll)
-    .then(p => deletePoll(poll).then(() => {
-        p.destroy();
-        polls.delete(poll);
+const destroyPoll = (io, { id }) => getPoll(id)
+    .then(poll => deletePollSession(id).then(() => {
+        const { ns } = p;
+        // delete namespace
+        Object.keys(ns.connected).forEach(socketId => {
+            ns.connected[socketId].disconnect();
+        });
+        ns.removeAllListeners();
+        delete io.nsps[`/${id}`];
+        // delete poll from application
+        polls.delete(id);
+        poll.destroy();
     }));
 
 /**
@@ -38,15 +52,13 @@ const destroyPoll = poll => getPoll(poll)
  * @param id
  * @return {Promise}
  */
-const getPoll = function (id) {
-    return new Promise((resolve, reject) => {
+const getPoll = id => new Promise((resolve, reject) => {
         if (polls.has(id)) {
             resolve(polls.get(id));
         } else {
             reject(new Error(`Poll with id ${id} not found`));
         }
     });
-};
 
 /**
  *
