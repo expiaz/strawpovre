@@ -49,7 +49,7 @@ CREATE TABLE question (
   -- poll id
   `poll_id`   VARCHAR(64)  NOT NULL,
   `question`  VARCHAR(300) NOT NULL,
-  `niveau`    VARCHAR(100) NOT NULL,
+  `level`     VARCHAR(100) NOT NULL,
 
   FOREIGN KEY (`poll_id`) REFERENCES `poll` (`id`) ON DELETE CASCADE,
   PRIMARY KEY (`id`)
