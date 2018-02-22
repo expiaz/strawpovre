@@ -35,7 +35,7 @@ const createPoll = (io, password, owner = new Prof('root@root.root', 'root', 'ro
  */
 const destroyPoll = (io, { id }) => getPoll(id)
     .then(poll => deletePollSession(id).then(() => {
-        const { ns } = p;
+        const { ns } = poll;
         // delete namespace
         Object.keys(ns.connected).forEach(socketId => {
             ns.connected[socketId].disconnect();

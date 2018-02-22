@@ -19,26 +19,6 @@ class Poll {
         this.index = 0;
         this.closed = false;
         this.ns = namespace;
-
-        const self = this;
-        const ns = io.of(`/${this.id}`);
-
-        ns.on('connection', function (socket) {
-            const user = socket.request.user;
-            if (!user) {
-                socket.disconnect();
-                return;
-            }
-
-            const { email, poll } = user;
-            self.addStudent({ email });
-            log(`Poll ${self.id}, ${email} connected`);
-
-            // setup listeners
-            socket.on('disconnect', function () {
-                log(`Poll ${self.id}, ${email} disconnected`);
-            });
-        });
     }
 
     destroy() {
