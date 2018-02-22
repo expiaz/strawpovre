@@ -5,7 +5,7 @@ class Question {
     /**
      *
      * @param id
-     * @param poll
+     * @param poll {Poll}
      * @param question
      * @param level
      * @param answers {Array<Answer>}

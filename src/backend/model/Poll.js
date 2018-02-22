@@ -63,6 +63,19 @@ class Poll {
         };
     }
 
+    /**
+     *
+     * @param question Question
+     * @returns {boolean}
+     */
+    addQuestion(question) {
+        if (this.questions.indexOf(question) !== -1)
+            return false;
+
+        this.questions.push(question);
+        return true;
+    }
+
     getAnswers() {
         const studentAnswers = {};
         this.students.forEach((student, answers) => {
