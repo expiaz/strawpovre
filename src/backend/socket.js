@@ -19,7 +19,7 @@ const bindSocket = function (provider, poll) {
         }
 
         const { email, admin } = user;
-        log(`Poll ${self.id}, ${email} connected`);
+        log(`Poll ${this.id}, ${email} connected`);
 
         /*
        on (event comes from front)

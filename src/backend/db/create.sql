@@ -1,4 +1,5 @@
 -- User
+DROP USER IF EXISTS 'strawpovre'@'localhost';
 CREATE USER 'strawpovre'@'localhost'
   IDENTIFIED BY 'Z-=37^3Jp';
 
@@ -6,7 +7,7 @@ CREATE USER 'strawpovre'@'localhost'
 DROP DATABASE IF EXISTS strawpovre;
 CREATE DATABASE strawpovre;
 GRANT ALL PRIVILEGES ON strawpovre.* TO 'strawpovre'@'localhost';
--- Connect with mysql -u strawpovre -p if you want
+-- Connect
 USE strawpovre;
 
 -- Tables
@@ -26,6 +27,44 @@ CREATE TABLE prof (
   `firstname` VARCHAR(100) NOT NULL,
 
   PRIMARY KEY (`email`)
+);
+
+-- POLL
+DROP TABLE IF EXISTS poll;
+CREATE TABLE poll (
+  `id`        VARCHAR(10)   NOT NULL,
+  -- prof email
+  `author`    VARCHAR(64)  NOT NULL,
+  `password`  VARCHAR(64)  NOT NULL,
+  `name`      VARCHAR(100) NOT NULL,
+  `niveau`    VARCHAR(100) NOT NULL,
+
+  FOREIGN KEY (`author`) REFERENCES `prof` (`email`) ON DELETE CASCADE,
+  PRIMARY KEY (`id`)
+);
+-- QUESTION
+DROP TABLE IF EXISTS question;
+CREATE TABLE question (
+  `id`        VARCHAR(10)   NOT NULL,
+  -- poll id
+  `poll_id`   VARCHAR(64)  NOT NULL,
+  `question`  VARCHAR(300) NOT NULL,
+  `niveau`    VARCHAR(100) NOT NULL,
+
+  FOREIGN KEY (`poll_id`) REFERENCES `poll` (`id`) ON DELETE CASCADE,
+  PRIMARY KEY (`id`)
+);
+-- ANSWER
+DROP TABLE IF EXISTS answer;
+CREATE TABLE answer (
+  `id`        VARCHAR(10)   NOT NULL,
+  -- question id
+  `question_id`   VARCHAR(64)  NOT NULL,
+  `answer`        VARCHAR(100) NOT NULL,
+  `is_correct`    INT(2) NOT NULL,
+
+  FOREIGN KEY (`question_id`) REFERENCES `question` (`id`) ON DELETE CASCADE,
+  PRIMARY KEY (`id`)
 );
 
 -- INSERTS
