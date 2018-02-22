@@ -51,14 +51,18 @@ app.get('*', (req, res) => {
 
 io.use(socketioSession);
 
+const poll = createPoll(io, 'abcd');
+log(`Poll created, go to /poll/${poll.id} and log with st1@st1.st1:abcd to see it`);
+
+/*
 const t = () => {
     const poll = createPoll(io, 'abcd');
     log(poll.id);
     const to = setTimeout(() => {
-        destroyPoll(poll.id);
+        destroyPoll(io, poll);
         clearTimeout(to);
         t();
     }, 15 * 1000);
 }
 
-t();
+t();*/
