@@ -1,11 +1,6 @@
-import Component from "./Component";
-import { store } from "./store";
-import { H } from "./h";
+import $ from 'jquery';
+import Popper from 'popper.js';
 
-const root = document.getElementById('root');
+import 'bootstrap';
 
-const node = store.mount(root, function (state) {
-    return H(Component, null, []);
-});
-
-// store.unmount()
+import './component/signin';
