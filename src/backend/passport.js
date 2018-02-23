@@ -27,6 +27,7 @@ passport.use('poll', new CustomStrategy((req, done) => {
     const { poll = '' } = req.params;
 
     if (!email.length || !password.length || !poll.length) {
+        log(`CustomStrategy missing fields : ${email} ${password} ${poll}`);
         return done(null, false);
     }
 
@@ -43,7 +44,7 @@ passport.use('poll', new CustomStrategy((req, done) => {
                     done(null, student);
                 }))
         .catch(err => {
-            log(`CustomStrategy ${email} ${poll} failed`);
+            log(`CustomStrategy ${email} ${poll} ${err} failed`);
             done(null, false);
         });
 }));

@@ -19,7 +19,7 @@ const bindSocket = function (provider, poll) {
         }
 
         const { email, admin } = user;
-        log(`Poll ${this.id}, ${email} connected`);
+        log(`Poll ${poll.id}, ${email} connected`);
 
         /*
        on (event comes from front)
@@ -42,10 +42,16 @@ const bindSocket = function (provider, poll) {
             prof: poll.owner,
         });
 
-        if (admin && poll.owner === email) {
-            bindAdmin(socket, user, poll);
+        if (admin) {
+            if (poll.owner !== email) {
+                // admins can't access every poll
+                socket.emit('server:poll:closed');
+                socket.disconnect();
+                return;
+            }
+            bindAdmin(socket, user, poll, provider);
         } else {
-            bindStudent(socket, user, poll);
+            bindStudent(socket, user, poll, provider);
         }
 
         // event bindings
@@ -88,17 +94,22 @@ const bindAdmin = (socket, user, poll) => {
     });
 };
 
-const bindStudent = (socket, user, poll) => {
+const bindStudent = (socket, user, poll, provider) => {
     const { email } = user;
     // add the student to the connected poll
     if (!poll.addStudent({ email })) {
         // if it fails, the poll is closed
         socket.emit('server:poll:closed');
         socket.disconnect();
+        return;
     }
 
     socket.on('client:student:answer', answer => {
         poll.addAnswer({ email }, answer);
+        provider.emit('server:student:answer', {
+            user,
+            answer
+        })
     });
 };
 

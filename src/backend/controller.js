@@ -12,7 +12,7 @@ const login = (req, res, next) => {
 
 const poll = (req, res) => {
     const { poll, user } = req;
-    if (user.admin) {
+    if (user.admin && poll.owner === user.email) {
         log(`controller poll user admin`);
         return res.render('poll-dashboard', {
             user,

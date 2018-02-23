@@ -45,6 +45,11 @@ app.get('/dashboard', (req, res, next) => {
     return next();
 }, controller.dashboard);
 
+// add a poll
+// app.post('/dashboard/poll');
+// delete a poll
+// app.delete('/dashboard/poll/:id(\\d+)')
+
 app.get('*', (req, res) => {
     res.redirect('/dashboard');
 });
