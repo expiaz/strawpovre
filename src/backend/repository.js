@@ -71,7 +71,7 @@ const getPoll = id => new Promise((resolve, reject) => {
  * @return {Promise}
  */
 const getPollsOf = prof =>
-    Array.from(polls.values()).filter(poll => poll.owner.email === prof.email);
+    Array.from(polls.values()).filter(poll => poll.owner === prof.email);
 
 /**
  *
@@ -125,7 +125,7 @@ const createQuestion = (label, level, subject, answers = []) => {
 /**
  *
  * @param id {Number}
- * @return {Promise<Subject>}
+ * @return {Promise<Level>}
  */
 const getLevel = id =>
     query('SELECT * FROM `level` WHERE `level`.`id` = ?', [id])
@@ -180,8 +180,8 @@ const getAnswer = (where = {1:1}) => buildQuery('answer', '*', where)
  * @param id {Number}
  * @return {Promise<Question>}
  */
-const getQuestion = id => {
-    query('SELECT * FROM `questions` WHERE `questions`.`id` = ?', [id])
+const getQuestion = id =>
+    query('SELECT * FROM `question` WHERE `question`.`id` = ?', [id])
         .then(async results => {
             if (!results.length) Promise.reject(`Question with id ${id} not found`);
             const { label, subject, level } = results[0];
@@ -193,7 +193,6 @@ const getQuestion = id => {
                 await getAnswer({ question: id })
             );
         })
-}
 
 /**
  * @return {Promise<Question[]>}
@@ -203,12 +202,6 @@ const getAllQuestions = () =>
         .then(results => Promise.all(
             results.map(({ id }) => getQuestion(id))
         ))
-/**
- * @param poll
- * @return {Promise}
- */
-const getQuestionsOf = poll =>
-    Array.from(polls.values()).filter(question => question.poll.id === poll.id);
 
 module.exports = {
     getStudent,
@@ -218,6 +211,5 @@ module.exports = {
     createPoll,
     destroyPoll,
     getQuestion,
-    getAllQuestions,
-    getQuestionsOf,
+    getAllQuestions
 };

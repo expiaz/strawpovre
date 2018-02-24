@@ -39,12 +39,14 @@
                     </a>
                 </h6>
                 <ul class="nav flex-column mb-2">
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">
-                            <span class="far fa-file-alt" ></span>
-                            Poll 1
-                        </a>
-                    </li>
+                    <% for(var i = 0; i < polls.length; i++) { %>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">
+                                <span class="far fa-file-alt" ></span>
+                                <%= polls[i].id %> <em>(<%= polls[i].questions.length %> questions)</em>
+                            </a>
+                        </li>
+                    <% } %>
                 </ul>
             </div>
         </nav>

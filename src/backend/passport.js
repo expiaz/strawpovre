@@ -16,7 +16,7 @@ passport.use(
                     done(null, prof)
                 })
                 .catch(err => {
-                    log(`LocalStrategy ${email} failed`);
+                    log(`LocalStrategy ${email} ${err} failed`);
                     done(null, false)
                 });
         })
