@@ -15,7 +15,7 @@
 </head>
 <body class="dashboard">
 <nav class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0">
-    <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">StrawPovre</a>
+    <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="/dashboard">StrawPovre</a>
     <ul class="navbar-nav px-3">
         <li class="nav-item text-nowrap">
             <a class="nav-link" href="/logout">Sign out</a>
@@ -41,7 +41,7 @@
                 <ul class="nav flex-column mb-2">
                     <% for(var i = 0; i < polls.length; i++) { %>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">
+                            <a class="nav-link" href="/poll/<%= polls[i].id %>">
                                 <span class="far fa-file-alt" ></span>
                                 <%= polls[i].id %> <em>(<%= polls[i].questions.length %> questions)</em>
                             </a>
@@ -54,7 +54,7 @@
             <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
                 <h1 class="h2">Dashboard</h1>
             </div>
-
+            <p>Select a poll to see its stats</p>
         </main>
     </div>
 </div>
