@@ -60,6 +60,10 @@ app.get('/dashboard', (req, res, next) => {
 // delete a poll
 // app.delete('/dashboard/poll/:id(\\d+)')
 
+app.post('/dashboard/poll', (req, res) => {
+    log(req.body);
+});
+
 app.get('*', (req, res) => {
     res.redirect('/dashboard');
 });
