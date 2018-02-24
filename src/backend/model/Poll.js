@@ -8,9 +8,8 @@ class Poll {
      * @param questions {Array<Question>}
      * @param password {String}
      * @param namespace
-     * @param max_time (seconds)
      */
-    constructor(id, { email }, questions, password, namespace, max_time = 900) {
+    constructor(id, { email }, questions, password, namespace) {
         this.id = id;
         this.password = password;
         this.owner = email;
@@ -20,7 +19,6 @@ class Poll {
         this.index = 0;
         this.closed = false;
         this.ns = namespace;
-        this.max_time = max_time;
     }
 
     destroy() {

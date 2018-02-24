@@ -8,7 +8,7 @@ require('./src/backend/passport');
 
 const {expressSession, socketioSession} = require('./src/backend/session');
 const {pollExists, pollAuth, formSchemaLogin, validateLoginFormSchema} = require('./src/backend/middleware');
-const {createPoll, destroyPoll} = require('./src/backend/repository');
+const {createPoll, destroyPoll, getAllQuestions} = require('./src/backend/repository');
 const {log} = require('./src/utils');
 const controller = require('./src/backend/controller');
 const config = require('./src/config');
@@ -71,15 +71,20 @@ app.get('/logout', (req, res) => {
     return res.redirect('/dashboard');
 });
 
-app.get('*', (req, res) => {
-    res.redirect('/dashboard');
-});
+app.get('*', (req, res) => res.redirect('/dashboard'));
 
 io.use(socketioSession);
 
-const poll = createPoll(io, 'abcd');
-log(`Poll created, go to /poll/${poll.id} and log with st1@st1.st1:abcd to see it`);
-log(`Bad poll created at /poll/${createPoll(io, 'abcd', new Prof('bad@bad.bad', 'bad', 'bad', [])).id}`);
+(async () => {
+    const poll = createPoll(
+        io,
+        'abcd',
+        new Prof('root@root.root', 'root', 'root', []),
+        await getAllQuestions()
+    );
+    log(`Poll created, go to /poll/${poll.id} and log with st1@st1.st1:abcd to see it`);
+    log(`Bad poll created at /poll/${createPoll(io, 'abcd', new Prof('bad@bad.bad', 'bad', 'bad', [])).id}`)
+})()
 
 /*
 const t = () => {
