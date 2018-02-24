@@ -86,8 +86,6 @@ io.use(socketioSession);
     log(`Bad poll created at /poll/${createPoll(io, 'abcd', new Prof('bad@bad.bad', 'bad', 'bad', [])).id}`)
 })()
 
-
-
 /*
 const t = () => {
     const poll = createPoll(io, 'abcd');
