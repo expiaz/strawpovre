@@ -40,6 +40,7 @@ const bindSocket = function (provider, poll) {
             students: Array.from(poll.students.values()),
             index: poll.index,
             prof: poll.owner,
+            timer: poll.max_time,
         });
 
         if (admin) {

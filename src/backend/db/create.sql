@@ -38,6 +38,7 @@ CREATE TABLE poll (
   `password`  VARCHAR(64)  NOT NULL,
   `name`      VARCHAR(100) NOT NULL,
   `niveau`    VARCHAR(100) NOT NULL,
+  `max_time`  INT(4)       NOT NULL,
 
   FOREIGN KEY (`author`) REFERENCES `prof` (`email`) ON DELETE CASCADE,
   PRIMARY KEY (`id`)
