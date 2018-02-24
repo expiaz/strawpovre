@@ -20,7 +20,8 @@ const poll = (req, res) => {
         log(`controller poll user admin`);
         return res.render('poll-dashboard', {
             user,
-            poll
+            poll,
+            polls: getPollsOf(user),
         });
     }
     log(`controller poll user student`);
