@@ -54,32 +54,36 @@ const ajax = (url, method, params, headers) => {
     });
 }
 
-const $form = document.querySelector('form'),
-    $login = $form.querySelector('input[name=login]'),
-    $pwd = $form.querySelector('input[name=password]'),
-    $log = document.querySelector('p');
+const $form = document.querySelector('form');
 
-document.addEventListener('keyup', e => (e.which || e.keyCode) === 13 && $form.dispatchEvent(new Event('submit')));
+if ($form) {
+   const $login = $form.querySelector('input[name=login]'),
+         $pwd = $form.querySelector('input[name=password]'),
+         $log = document.querySelector('p');
 
-$form.addEventListener('submit', e => {
-    e.preventDefault();
-    ajax(window.location.pathname, 'POST', {
-        login: $login.value,
-        password: $pwd.value
-    }, {
-        'Content-Type': 'application/x-www-form-urlencoded'
-    }).then(response => {
-        if (response.success && response.token) {
-            localStorage.setItem('strawpovre', JSON.stringify({
-                token: response.token,
-                poll: response.poll
-            }));
-            location.reload();
-        } else {
-            $log.textContent = response.error;
-        }
-    }).catch(err => {
-        $log.textContent = err.message;
+    document.addEventListener('keyup', e => (e.which || e.keyCode) === 13 && $form.dispatchEvent(new Event('submit')));
+
+    $form.addEventListener('submit', e => {
+        e.preventDefault();
+        ajax(window.location.pathname, 'POST', {
+            login: $login.value,
+            password: $pwd.value
+        }, {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        }).then(response => {
+            if (response.success && response.token) {
+                localStorage.setItem('strawpovre', JSON.stringify({
+                    token: response.token,
+                    poll: response.poll
+                }));
+                location.reload();
+            } else {
+                $log.textContent = response.error;
+            }
+        }).catch(err => {
+            $log.textContent = err.message;
+        });
+        return false;
     });
-    return false;
-});
+}
+
