@@ -203,6 +203,12 @@ const getAllQuestions = () =>
         .then(results => Promise.all(
             results.map(({ id }) => getQuestion(id))
         ))
+/**
+ * @param poll
+ * @return {Promise}
+ */
+const getQuestionsOf = poll =>
+    Array.from(polls.values()).filter(question => question.poll.id === poll.id);
 
 module.exports = {
     getStudent,
@@ -212,5 +218,6 @@ module.exports = {
     createPoll,
     destroyPoll,
     getQuestion,
-    getAllQuestions
+    getAllQuestions,
+    getQuestionsOf,
 };
