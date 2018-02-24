@@ -64,6 +64,13 @@ app.post('/dashboard/poll', (req, res) => {
     log(req.body);
 });
 
+app.get('/logout', (req, res) => {
+    if (req.user) {
+        req.logout();
+    }
+    return res.redirect('/dashboard');
+});
+
 app.get('*', (req, res) => {
     res.redirect('/dashboard');
 });
