@@ -43,7 +43,7 @@
     "gulp-rename": "latest",
     "gulp-sass": "^3.1.0",
     "gulp-sourcemaps": "^2.6.4",
-    "nodemon": "^1.14.11",
+    "nodemon": "^1.15.1",
     "vinyl-buffer": "^1.0.1",
     "vinyl-source-stream": "^2.0.0"
   },
@@ -68,7 +68,7 @@
     "passport-custom": "^1.0.5",
     "passport-local": "^1.0.0",
     "passport.socketio": "^3.7.0",
-    "popper.js": "^1.12.9",
+    "popper.js": "^1.13.0",
     "socket.io": "^2.0.4",
     "socket.io-client": "^2.0.4",
     "uid": "0.0.2"

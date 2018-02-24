@@ -96,6 +96,14 @@ const getProf = (where = {1:1}) => buildQuery('prof', '*', where)
         return new Prof(email, name, firstname, getPollsOf({ email }));
     });
 
+/**
+ * @param poll
+ * @return {Promise}
+ */
+const getQuestionsOf = poll =>
+    Array.from(polls.values()).filter(question => question.poll.id === poll.id);
+
+
 module.exports = {
     getStudent,
     getProf,
@@ -103,4 +111,5 @@ module.exports = {
     getPollsOf,
     createPoll,
     destroyPoll,
+    getQuestionsOf,
 };
