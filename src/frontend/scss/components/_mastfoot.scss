@@ -1,0 +1,13 @@
+.mastfoot {
+  color: rgba(255,255,255,.5);
+
+  @media (min-width: 40em) {
+    width: 100%;
+    position: fixed;
+    bottom: 0;
+  }
+
+  @media (min-width: 62em) {
+    width: 42rem;
+  }
+}
