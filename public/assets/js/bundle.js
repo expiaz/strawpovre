@@ -16725,9 +16725,14 @@ require('bootstrap');
 
 require('./component/signin');
 
+require('./component/global');
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-},{"./component/signin":5,"bootstrap":1,"jquery":2,"popper.js":3}],5:[function(require,module,exports){
+},{"./component/global":5,"./component/signin":6,"bootstrap":1,"jquery":2,"popper.js":3}],5:[function(require,module,exports){
+"use strict";
+
+},{}],6:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -16786,37 +16791,40 @@ var ajax = function ajax(url, method, params, headers) {
     });
 };
 
-var $form = document.querySelector('form'),
-    $login = $form.querySelector('input[name=login]'),
-    $pwd = $form.querySelector('input[name=password]'),
-    $log = document.querySelector('p');
+var $form = document.querySelector('form');
 
-document.addEventListener('keyup', function (e) {
-    return (e.which || e.keyCode) === 13 && $form.dispatchEvent(new Event('submit'));
-});
+if ($form) {
+    var $login = $form.querySelector('input[name=login]'),
+        $pwd = $form.querySelector('input[name=password]'),
+        $log = document.querySelector('p');
 
-$form.addEventListener('submit', function (e) {
-    e.preventDefault();
-    ajax(window.location.pathname, 'POST', {
-        login: $login.value,
-        password: $pwd.value
-    }, {
-        'Content-Type': 'application/x-www-form-urlencoded'
-    }).then(function (response) {
-        if (response.success && response.token) {
-            localStorage.setItem('strawpovre', JSON.stringify({
-                token: response.token,
-                poll: response.poll
-            }));
-            location.reload();
-        } else {
-            $log.textContent = response.error;
-        }
-    }).catch(function (err) {
-        $log.textContent = err.message;
+    document.addEventListener('keyup', function (e) {
+        return (e.which || e.keyCode) === 13 && $form.dispatchEvent(new Event('submit'));
     });
-    return false;
-});
+
+    $form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        ajax(window.location.pathname, 'POST', {
+            login: $login.value,
+            password: $pwd.value
+        }, {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        }).then(function (response) {
+            if (response.success && response.token) {
+                localStorage.setItem('strawpovre', JSON.stringify({
+                    token: response.token,
+                    poll: response.poll
+                }));
+                location.reload();
+            } else {
+                $log.textContent = response.error;
+            }
+        }).catch(function (err) {
+            $log.textContent = err.message;
+        });
+        return false;
+    });
+}
 
 },{}]},{},[4])
 

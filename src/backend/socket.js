@@ -69,7 +69,7 @@ const bindSocket = function (provider, poll) {
                 log (`Request : ${socket.request}`);
             }
         });
-     **/
+        **/
     });
 };
 

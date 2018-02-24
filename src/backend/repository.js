@@ -120,7 +120,7 @@ const createQuestion = (label, level, subject, answers = []) => {
             }))
         ).then(answers => new Question(questionId, label, level, subject, answers))
     })
-}
+};
 
 /**
  *
@@ -133,7 +133,7 @@ const getLevel = id =>
             if (!results.length) Promise.reject(`Level with id ${id} not found`);
             const { label } = results[0];
             return new Level(id, label);
-        })
+        });
 
 /**
  * @return {Level<Subject[]>}
@@ -142,7 +142,7 @@ const getAllLevels = () =>
     query('SELECT `id` FROM `level`')
         .then(results => Promise.all(
             results.map(({ id }) => getLevel(id))
-        ))
+        ));
 
 /**
  * @param id {Number}
@@ -154,7 +154,7 @@ const getSubject = id =>
             if (!results.length) Promise.reject(`Subject with id ${id} not found`);
             const { label } = results[0];
             return new Subject(id, label);
-        })
+        });
 
 /**
  * @return {Promise<Subject[]>}
@@ -163,7 +163,7 @@ const getAllSubjects = () =>
     query('SELECT `id` FROM `subject`')
         .then(results => Promise.all(
             results.map(({ id }) => getSubject(id))
-        ))
+        ));
 
 /**
  *
@@ -173,7 +173,7 @@ const getAllSubjects = () =>
 const getAnswer = (where = {1:1}) => buildQuery('answer', '*', where)
     .then(results => results.map(
         ({ id, label, question, correct }) => new Answer(id, label, question, correct)
-    ))
+    ));
 
 /**
  *
@@ -202,13 +202,7 @@ const getAllQuestions = () =>
     query('SELECT `id` FROM `question`')
         .then(results => Promise.all(
             results.map(({ id }) => getQuestion(id))
-        ))
-/**
- * @param poll
- * @return {Promise}
- */
-const getQuestionsOf = poll =>
-    Array.from(polls.values()).filter(question => question.poll.id === poll.id);
+        ));
 
 module.exports = {
     getStudent,
@@ -219,5 +213,4 @@ module.exports = {
     destroyPoll,
     getQuestion,
     getAllQuestions,
-    getQuestionsOf,
 };

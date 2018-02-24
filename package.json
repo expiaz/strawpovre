@@ -44,12 +44,8 @@
     "gulp-rename": "latest",
     "gulp-sass": "^3.1.0",
     "gulp-sourcemaps": "^2.6.4",
-<<<<<<< HEAD
     "gulp-util": "^3.0.8",
     "nodemon": "^1.14.11",
-=======
-    "nodemon": "^1.15.1",
->>>>>>> 9a5e3c431b7d0fcb6affaaf249aecb99843f8b1f
     "vinyl-buffer": "^1.0.1",
     "vinyl-source-stream": "^2.0.0"
   },
@@ -63,12 +59,9 @@
     "express": "^4.16.2",
     "express-mysql-session": "^1.2.3",
     "express-session": "^1.15.6",
-<<<<<<< HEAD
     "express-validator": "^5.0.1",
-=======
     "font-awesome": "^4.7.0",
     "gulp-util": "^3.0.8",
->>>>>>> 9a5e3c431b7d0fcb6affaaf249aecb99843f8b1f
     "helmet": "^3.11.0",
     "jquery": "^3.3.1",
     "md5": "^2.2.1",
