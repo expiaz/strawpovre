@@ -2,6 +2,9 @@ Welcome !
 
 <script src="/socket.io/socket.io.js"></script>
 <script>
+    const poll = '<%= poll %>';
+    const state = JSON.stringify('<%= state %>');
+
     var socket = io('/<%= poll.id %>');
 
     socket.on('server:poll:join', packet => {

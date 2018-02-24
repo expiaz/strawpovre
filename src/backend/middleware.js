@@ -1,4 +1,5 @@
 const passport = require('./passport');
+const {body, validationResult} = require('express-validator/check');
 
 const {getPoll} = require('./repository');
 
@@ -28,7 +29,9 @@ const pollAuth = (req, res, next) => {
         }
         if (!user) {
             log(`pollAuth ${poll} failed connection`);
-            return res.redirect(`/poll/${poll}`);
+            return res.render('poll-login', {
+                error: 'Identifiants incorrects'
+            });
         }
         req.user = user;
         req.login(user, err => {
@@ -41,7 +44,32 @@ const pollAuth = (req, res, next) => {
     })(req, res, next);
 }
 
+const formSchemaLogin = [
+    body('email')
+        .exists()
+        .withMessage('Email requis')
+        .trim()
+        .normalizeEmail(),
+    body('password')
+        .exists()
+        .withMessage('Mot de passe requis')
+];
+
+const validateLoginFormSchema = view =>
+    (req, res, next) => {
+        const error = validationResult(req);
+        if (!error.isEmpty()) {
+            const {email = {}, password = {}} = error.mapped();
+            return res.render(view, {
+                error: email.msg || password.msg
+            });
+        }
+        return next();
+    }
+
 module.exports = {
     pollExists,
     pollAuth,
+    formSchemaLogin,
+    validateLoginFormSchema
 }

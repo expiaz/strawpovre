@@ -19,6 +19,7 @@ CREATE TABLE student (
 
   PRIMARY KEY (`email`)
 );
+
 DROP TABLE IF EXISTS prof;
 CREATE TABLE prof (
   `email`     VARCHAR(64)  NOT NULL,
@@ -29,42 +30,46 @@ CREATE TABLE prof (
   PRIMARY KEY (`email`)
 );
 
--- POLL
-DROP TABLE IF EXISTS poll;
-CREATE TABLE poll (
-  `id`        VARCHAR(10)   NOT NULL,
-  -- prof email
-  `author`    VARCHAR(64)  NOT NULL,
-  `password`  VARCHAR(64)  NOT NULL,
-  `name`      VARCHAR(100) NOT NULL,
-  `niveau`    VARCHAR(100) NOT NULL,
+-- LEVEL
+DROP TABLE IF EXISTS level;
+CREATE TABLE level (
+  `id`    INT AUTO_INCREMENT,
+  `label` VARCHAR(100) NOT NULL,
 
-  FOREIGN KEY (`author`) REFERENCES `prof` (`email`) ON DELETE CASCADE,
   PRIMARY KEY (`id`)
 );
+
+-- SUBJECT
+DROP TABLE IF EXISTS `subject`;
+CREATE TABLE subject (
+  `id`    INT AUTO_INCREMENT,
+  `label` VARCHAR(100) NOT NULL,
+
+  PRIMARY KEY (`id`)
+);
+
 -- QUESTION
 DROP TABLE IF EXISTS question;
 CREATE TABLE question (
-  `id`        VARCHAR(10)   NOT NULL,
-  -- poll id
-  `poll_id`   VARCHAR(64)  NOT NULL,
-  `question`  VARCHAR(300) NOT NULL,
-  `level`     VARCHAR(100) NOT NULL,
+  `id`        INT AUTO_INCREMENT,
+  `label`     VARCHAR(300) NOT NULL,
+  `subject`   INT NOT NULL,
+  `level`     INT NOT NULL,
 
-  FOREIGN KEY (`poll_id`) REFERENCES `poll` (`id`) ON DELETE CASCADE,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  CONSTRAINT FK_questionSubject FOREIGN KEY (`subject`) REFERENCES `subject`(`id`)  ON DELETE CASCADE,
+  CONSTRAINT FK_questionLevel FOREIGN KEY (`level`) REFERENCES `level`(`id`)  ON DELETE CASCADE
 );
 -- ANSWER
 DROP TABLE IF EXISTS answer;
 CREATE TABLE answer (
-  `id`        VARCHAR(10)   NOT NULL,
-  -- question id
-  `question_id`   VARCHAR(64)  NOT NULL,
-  `answer`        VARCHAR(100) NOT NULL,
-  `is_correct`    INT(2) NOT NULL,
+  `id`         INT AUTO_INCREMENT,
+  `label`      VARCHAR(100) NOT NULL,
+  `question`   INT NOT NULL,
+  `correct`    BOOLEAN NOT NULL,
 
-  FOREIGN KEY (`question_id`) REFERENCES `question` (`id`) ON DELETE CASCADE,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  CONSTRAINT FK_answerQuestion FOREIGN KEY (`question`) REFERENCES `question`(`id`) ON DELETE CASCADE
 );
 
 -- INSERTS
@@ -72,3 +77,11 @@ INSERT INTO prof (email, password, name, firstname)
 VALUES ('root@root.root', '63a9f0ea7bb98050796b649e85481845', 'root', 'admin');
 INSERT INTO student (email, name, firstname) VALUES ('st1@st1.st1', 'John', 'Doe');
 INSERT INTO student (email, name, firstname) VALUES ('st2@st2.st2', 'Doe', 'John');
+
+INSERT INTO subject VALUES (NULL, 'Français');
+INSERT INTO level VALUES (NULL, 'L2');
+
+INSERT INTO question VALUES (NULL, 'What is blue ?', 1, 1);
+INSERT INTO answer VALUES (NULL, 'blue', 1, TRUE);
+INSERT INTO answer VALUES (NULL, 'red', 1, FALSE);
+INSERT INTO answer VALUES (NULL, 'green', 1, FALSE);
