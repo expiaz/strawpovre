@@ -39,9 +39,9 @@ const pollAuth = (req, res, next) => {
             next();
         });
     })(req, res, next);
-}
+};
 
 module.exports = {
     pollExists,
     pollAuth,
-}
+};

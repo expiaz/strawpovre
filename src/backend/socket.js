@@ -30,7 +30,7 @@ const bindSocket = function (provider, poll) {
        client:student:answer => new answer from a student
 
        emit (event goes to front)
-       server:poll:join => list of ppl, length of poll
+       server:poll:join => list of ppl, length of poll, prof, timer
        server:poll:closed => the poll is closed, the connection is refused
        server:question:next => send the next question
         */
@@ -59,6 +59,17 @@ const bindSocket = function (provider, poll) {
         socket.on('disconnect', () => {
             log(`Poll ${poll.id}, ${email} disconnected`);
         });
+
+        /**
+        socket.on('client:admin:student:remove', (user, poll) => {
+            if (user.email !== poll.owner) {
+                log(`Poll ${poll.id}, ${user.name} is not authorized to blacklist another user`);
+                return;
+            } else {
+                log (`Request : ${socket.request}`);
+            }
+        });
+     **/
     });
 };
 
