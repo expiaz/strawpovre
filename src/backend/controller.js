@@ -12,7 +12,11 @@ const login = (req, res, next) => {
 
 const poll = (req, res) => {
     const { poll, user } = req;
-    if (user.admin && poll.owner === user.email) {
+    if (user.admin) {
+        if (poll.owner !== user.email) {
+            // admins can't access to every poll
+            return res.redirect('/dashboard');
+        }
         log(`controller poll user admin`);
         return res.render('poll-dashboard', {
             user,

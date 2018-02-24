@@ -4,6 +4,11 @@ const uid = require('uid');
 const Student = require('./model/Student');
 const Prof = require('./model/Prof');
 const Poll = require('./model/Poll');
+const Question = require('./model/Question');
+const Answer = require('./model/Answer');
+const Level = require('./model/Level');
+const Subject = require('./model/Subject');
+
 const { query, buildQuery } = require('./database');
 const { bindSocket } = require('./socket');
 const deletePollSession = require('./session').deletePoll;
@@ -96,13 +101,114 @@ const getProf = (where = {1:1}) => buildQuery('prof', '*', where)
         return new Prof(email, name, firstname, getPollsOf({ email }));
     });
 
+const createQuestion = (label, level, subject, answers = []) => {
+    query('INSERT INTO `question` SET ?', {
+        label,
+        level,
+        subject
+    }).then(results => {
+        const questionId = results.insertedId;
+        return Promise.all(
+            answers.map(({ label, correct }) => query('INSERT INTO `answer` SET ?', {
+                label,
+                question: questionId,
+                correct
+            })
+            .then(res => {
+                const answerId = res.insertedId;
+                return new Answer(answerId, questionId, label, correct);
+            }))
+        ).then(answers => new Question(questionId, label, level, subject, answers))
+    })
+}
+
+/**
+ *
+ * @param id {Number}
+ * @return {Promise<Subject>}
+ */
+const getLevel = id =>
+    query('SELECT * FROM `level` WHERE `level`.`id` = ?', [id])
+        .then(results => {
+            if (!results.length) Promise.reject(`Level with id ${id} not found`);
+            const { label } = results[0];
+            return new Level(id, label);
+        })
+
+/**
+ * @return {Level<Subject[]>}
+ */
+const getAllLevels = () =>
+    query('SELECT `id` FROM `level`')
+        .then(results => Promise.all(
+            results.map(({ id }) => getLevel(id))
+        ))
+
+/**
+ * @param id {Number}
+ * @return {Promise<Subject>}
+ */
+const getSubject = id =>
+    query('SELECT * FROM `subject` WHERE `subject`.`id` = ?', [id])
+        .then(results => {
+            if (!results.length) Promise.reject(`Subject with id ${id} not found`);
+            const { label } = results[0];
+            return new Subject(id, label);
+        })
+
+/**
+ * @return {Promise<Subject[]>}
+ */
+const getAllSubjects = () =>
+    query('SELECT `id` FROM `subject`')
+        .then(results => Promise.all(
+            results.map(({ id }) => getSubject(id))
+        ))
+
+/**
+ *
+ * @param where {Object} WHERE cond
+ * @return {Promise<Answer[]>}
+ */
+const getAnswer = (where = {1:1}) => buildQuery('answer', '*', where)
+    .then(results => results.map(
+        ({ id, label, question, correct }) => new Answer(id, label, question, correct)
+    ))
+
+/**
+ *
+ * @param id {Number}
+ * @return {Promise<Question>}
+ */
+const getQuestion = id => {
+    query('SELECT * FROM `questions` WHERE `questions`.`id` = ?', [id])
+        .then(async results => {
+            if (!results.length) Promise.reject(`Question with id ${id} not found`);
+            const { label, subject, level } = results[0];
+            return new Question(
+                id,
+                label,
+                await getSubject(subject),
+                await getLevel(level),
+                await getAnswer({ question: id })
+            );
+        })
+}
+
+/**
+ * @return {Promise<Question[]>}
+ */
+const getAllQuestions = () =>
+    query('SELECT `id` FROM `question`')
+        .then(results => Promise.all(
+            results.map(({ id }) => getQuestion(id))
+        ))
 /**
  * @param poll
  * @return {Promise}
  */
 const getQuestionsOf = poll =>
     Array.from(polls.values()).filter(question => question.poll.id === poll.id);
-
 
 module.exports = {
     getStudent,
@@ -111,5 +217,7 @@ module.exports = {
     getPollsOf,
     createPoll,
     destroyPoll,
+    getQuestion,
+    getAllQuestions,
     getQuestionsOf,
 };

@@ -4,16 +4,16 @@ class Answer {
 
     /**
      *
-     * @param id
+     * @param id {Number}
+     * @param label {String}
      * @param question {Question}
-     * @param answer
-     * @param isCorrect {Boolean}
+     * @param correct {Boolean}
      */
-    constructor(id, question, answer, isCorrect) {
+    constructor(id, label, question, correct) {
         this.id = id;
+        this.label = label;
         this.question = question;
-        this.answer = answer;
-        this.isCorrect = isCorrect;
+        this.correct = correct;
     }
 }
 

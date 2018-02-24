@@ -4,16 +4,16 @@ class Question {
 
     /**
      *
-     * @param id
-     * @param poll {Poll}
-     * @param question
-     * @param level
-     * @param answers {Array<Answer>}
+     * @param id {Number}
+     * @param label {String}
+     * @param level {Level}
+     * @param subject {Subject}
+     * @param answers {Answer[]}
      */
-    constructor(id, poll, question, level, answers) {
+    constructor(id, label, subject, level, answers) {
         this.id = id;
-        this.poll = poll;
-        this.question = question;
+        this.label = label;
+        this.subject = subject;
         this.level = level;
         this.answers = answers;
     }
@@ -39,7 +39,7 @@ class Question {
         let isCorrect = false;
         this.answers.forEach(function (idAnswer) {
             if (answer.id === idAnswer)
-                isCorrect = answer.isCorrect;
+                isCorrect = answer.correct;
         });
 
         return isCorrect;
