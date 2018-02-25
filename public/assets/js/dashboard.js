@@ -78,7 +78,7 @@ $('document').ready(function () {
                 }).done(function (res) {
                     if (res.success) {
                         $('.poll-modal').modal('hide');
-                        $('.poll-container').append($('<li><a href="/poll/' + res.poll.id + '">' + res.poll.id +'</a></li>'))
+                        $('.poll-container').html(res.template);
                     } else {
                         $('.poll-modal .error').html(res.error.join('<br/>'))
                     }
@@ -87,7 +87,7 @@ $('document').ready(function () {
                 })
                 return false;
             });
-            $buttonSubmitQuestion.click(function () {
+            $buttonSubmitPoll.click(function () {
                 $form.submit();
             });
             $('.poll-modal').modal('show');

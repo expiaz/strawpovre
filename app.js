@@ -4,6 +4,7 @@ const socketio = require('socket.io');
 const path = require('path');
 const passport = require('passport');
 const expressValidator = require('express-validator');
+const fs = require('fs');
 
 require('./src/backend/passport');
 
@@ -23,7 +24,8 @@ const {
     getQuestion,
     getAllSubjects,
     getAllLevels,
-    createQuestion
+    createQuestion,
+    getPollsOf
 } = require('./src/backend/repository');
 const {log} = require('./src/utils');
 const controller = require('./src/backend/controller');
@@ -136,10 +138,9 @@ app.post('/dashboard/poll', adminAuth, formSchemaPoll, validateFormSchema((req, 
     const poll = createPoll(io, password, req.user, question.map(async id => await getQuestion(id)));
     return res.json({
         success: true,
-        poll: {
-            id: poll.id,
-            length: poll.questions.length
-        }
+        template: require('ejs').render(fs.readFileSync(path.join(__dirname, './public/poll-list.ejs'), {encoding: 'utf-8'}), {
+            polls: await getPollsOf(req.user)
+        })
     });
 });
 
