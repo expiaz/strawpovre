@@ -44,6 +44,10 @@ const bindSocket = function (provider, poll) {
             }
             bindAdmin(socket, user, poll, provider);
         } else {
+            provider.emit('server:student:join', {
+                user: email,
+                count: poll.students.size,
+            });
             bindStudent(socket, user, poll, provider);
         }
 
@@ -54,14 +58,6 @@ const bindSocket = function (provider, poll) {
             index: poll.index,
             prof: poll.owner,
         });
-
-        if (poll.owner !== email) {
-            log(`Poll ${poll.id} event ${email} just joined`);
-            provider.emit('server:student:join', {
-                user: email,
-                count: poll.students.size,
-            });
-        }
 
         // event bindings
         socket.on('disconnect', () => {

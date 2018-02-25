@@ -12,6 +12,7 @@ const {expressSession, socketioSession} = require('./src/backend/session');
 const {
     pollExists,
     pollAuth,
+    adminAuth,
     formSchemaLogin,
     formSchemaQuestion,
     formSchemaPoll,
@@ -25,9 +26,10 @@ const {
     getAllSubjects,
     getAllLevels,
     createQuestion,
-    getPollsOf
+    getPollsOf,
+    getPoll
 } = require('./src/backend/repository');
-const {log} = require('./src/utils');
+const {log, render} = require('./src/utils');
 const controller = require('./src/backend/controller');
 const config = require('./src/config');
 const Prof = require('./src/backend/model/Prof');
@@ -69,13 +71,6 @@ app.post('/dashboard',
         successRedirect: '/dashboard'
     }));
 
-var adminAuth = (req, res, next) => {
-    if (!req.user || !req.user.admin) {
-        return res.render('dashboard-login');
-    }
-    return next();
-};
-
 app.get('/dashboard', adminAuth, controller.dashboard);
 
 // add a poll
@@ -85,16 +80,25 @@ app.get('/dashboard', adminAuth, controller.dashboard);
 // delete a poll
 // app.delete('/dashboard/poll/:id(\\d+)')
 
-app.get('/modal/question', adminAuth, async (req, res) => {
-    return res.render('forms/question', {
+app.get('/modal/question', adminAuth, async (req, res) =>
+    res.render('forms/question', {
         subjects: await getAllSubjects(),
         levels: await getAllLevels()
-    })
-});
+    }))
 
 app.get('/modal/poll', adminAuth, async (req, res) => {
-    return res.render('forms/poll', {
-        questions: await getAllQuestions()
+    return res.json({
+        template: render('forms/poll', {
+            subjects: await getAllSubjects(),
+            levels: await getAllLevels(),
+            questions: await getAllQuestions()
+        }),
+        data: await getAllQuestions().then(questions => questions.map(q => ({
+            id: q.id,
+            label: q.label,
+            subject: q.subject.id,
+            level: q.level.id
+        })))
     })
 });
 
@@ -127,16 +131,43 @@ app.post('/dashboard/poll', adminAuth, formSchemaPoll, validateFormSchema((req, 
     success: false,
     error: err
 })), async (req, res) => {
-    log(req.body);
+    if (!req.body.question.find(v => Boolean(v | 0))) {
+        return res.json({
+            success: false,
+            error: ['Au moins une question doit être remplie']
+        });
+    }
     const { password, question } = req.body;
     const poll = createPoll(io, password, req.user, question.map(async id => await getQuestion(id)));
     return res.json({
         success: true,
-        template: require('ejs').render(fs.readFileSync(path.join(__dirname, './public/poll-list.ejs'), {encoding: 'utf-8'}), {
+        template: render('poll-list', {
             polls: await getPollsOf(req.user)
         })
     });
 });
+
+app.delete('/dashboard/poll', adminAuth, (req, res) => {
+    const { id = '' } = req.body;
+    if (!id || id.length !== 5) {
+        return res.json({
+            success: false,
+            error: ['A poll must have an id']
+        });
+    }
+    destroyPoll(io, { id })
+        .then(() => {
+            res.json({
+                success: true
+            })
+        })
+        .catch(e => {
+            res.json({
+                success: false,
+                error: [e.message]
+            })
+        })
+})
 
 app.get('/logout', (req, res) => {
     if (req.user) {
