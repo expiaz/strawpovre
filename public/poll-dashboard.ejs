@@ -13,7 +13,7 @@
     <link rel="stylesheet" href="/assets/css/styles.css">
     <title>Admin</title>
 </head>
-<body class="dashboard">
+<body class="dashboard" onload="init();">
 <nav class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0">
     <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="/dashboard">StrawPovre</a>
     <ul class="navbar-nav px-3">
@@ -47,12 +47,12 @@
                 <ul class="nav flex-column mb-2">
                     <li class="nav-item">
                         <% if (polls) { %>
-                        <% for (var i = 0; i < polls.length; i++) { %>
-                        <a class="nav-link" href="/poll/<%= polls[i].id %>">
-                            <span class="far fa-file-alt"></span>
-                            <%= polls[i].id %> (Question : <%= polls[i].questions.length %>)
-                        </a>
-                        <% }
+                            <% for (var i = 0; i < polls.length; i++) { %>
+                                <a class="nav-link" href="/poll/<%= polls[i].id %>">
+                                    <span class="far fa-file-alt"></span>
+                                    <%= polls[i].id %> (Question : <%= polls[i].questions.length %>)
+                                </a>
+                            <% }
                         } %>
                     </li>
                 </ul>
@@ -109,6 +109,31 @@
         integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn"
         crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.bundle.js"></script>
+<script src="/socket.io/socket.io.js"></script>
 <script type="text/javascript" src="../assets/js/dashboardPoll.js"></script>
+<script type="text/javascript" src="../assets/js/bootstrap-notify.min.js"></script>
+
+<!-- events -->
+<script type="text/javascript">
+
+    let socket = io('/<%= poll.id %>');
+
+    socket.on('server:poll:join', packet => {
+        if (packet.user !== packet.prof) {
+            $.notify(
+                {message: 'A user just joined the poll'},
+                {type: 'info'}
+            );
+        }
+    });
+
+    socket.on('server:user:disconnect', packet => {
+        $.notify(
+            {message: 'A user just left the poll'},
+            {type: 'info'}
+        );
+    });
+
+</script>
 </body>
 </html>

@@ -36,6 +36,7 @@ const bindSocket = function (provider, poll) {
         */
 
         socket.emit('server:poll:join', {
+            user : email,
             length: poll.questions.length,
             students: Array.from(poll.students.values()),
             index: poll.index,
@@ -58,17 +59,6 @@ const bindSocket = function (provider, poll) {
         socket.on('disconnect', () => {
             log(`Poll ${poll.id}, ${email} disconnected`);
         });
-
-        /**
-        socket.on('client:admin:student:remove', (user, poll) => {
-            if (user.email !== poll.owner) {
-                log(`Poll ${poll.id}, ${user.name} is not authorized to blacklist another user`);
-                return;
-            } else {
-                log (`Request : ${socket.request}`);
-            }
-        });
-        **/
     });
 };
 
@@ -121,6 +111,10 @@ const bindStudent = (socket, user, poll, provider) => {
             user,
             answer
         })
+    });
+
+    socket.on('disconnect', () => {
+        provider.emit('server:user:disconnect');
     });
 };
 
