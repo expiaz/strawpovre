@@ -42,11 +42,18 @@ function questionHandler(data) {
     content.append('<canvas id="chart-answers" width="400" height="400"></canvas>');
 
     const ctx = document.getElementById('chart-answers');
-    let chartAnswers = displayChartOnNextQuestion(ctx, data);
+    let chartAnswers = initChart(ctx, data);
+}
+
+function answerHandler(data) {
+    $.notify(
+        {message: 'An answer has been subscribed : ' + data.answer.label},
+        {type: 'success'}
+    );
 }
 
 //Charts
-function displayChartOnNextQuestion(ctx, question, questionNumber = 1) {
+function initChart(ctx, question) {
     if (!question)
         return;
     let answers = question.answers;
@@ -62,7 +69,7 @@ function displayChartOnNextQuestion(ctx, question, questionNumber = 1) {
         data: {
             labels: labels,
             datasets: [{
-                label: 'Answers for the question n°' + questionNumber,
+                label: "Answers",
                 data: data,
                 backgroundColor: backgroundColors,
                 borderColor: borderColors,
