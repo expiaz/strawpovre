@@ -25,12 +25,12 @@
         </tr>
         </thead>
         <tbody>
-        <% for (var {key, student} of poll.students) { %>
-            <% if (student) { %>
+        <% for (var student of poll.students) { %>
+        <% if (student) { %>
                 <tr>
-                    <td><%= student %></td>
+                    <td class="email-student-poll"><%= student[0] %></td>
                     <td>
-                        <button class="btn btn-block kick-button">Kick user</button>
+                        <button class="btn btn-block kick-button" onclick="triggerBlacklist(this);">Kick user</button>
                     </td>
                 </tr>
             <% } %>
@@ -60,11 +60,32 @@
         }
     });
 
+    socket.on('server:admin:blacklist:user', packet => {
+        $.notify(
+            {message: packet.user + ' has been blacklisted from the poll'},
+            {type: 'danger'}
+        );
+    });
+
     socket.on('server:user:disconnect', () => {
         $.notify(
             {message: 'A user just left the poll'},
             {type: 'info'}
         );
+    });
+
+    function triggerBlacklist(elem) {
+        if (!$(elem).prop("disabled")) {
+            var student = $(elem).parent().parent().find(".email-student-poll").text();
+            socket.emit('client:admin:student:remove', {
+                user: student,
+            });
+            $(elem).prop("disabled", true);
+        }
+    }
+
+    $("#start-poll-button").click(function (e) {
+        socket.emit('client:admin:poll:start');
     });
 </script>
 

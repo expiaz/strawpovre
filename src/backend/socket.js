@@ -70,7 +70,7 @@ const bindSocket = function (provider, poll) {
     });
 };
 
-const bindAdmin = (socket, user, poll, provider) => {
+const bindAdmin = (socket, user, poll) => {
     const { email } = user;
 
     const handleNextQuestion = () => {
@@ -84,7 +84,16 @@ const bindAdmin = (socket, user, poll, provider) => {
         return question;
     };
 
+    socket.on('client:admin:student:remove', packet => {
+        log(`A user (${packet.user}) has been removed from the poll ${poll.id}`);
+
+        poll.removeStudent(packet.user);
+
+        socket.emit('server:admin:blacklist:user', packet);
+    });
+
     socket.on('client:admin:poll:start', () => {
+        log(`Starting the polll ${poll.id}`);
         poll.start();
         handleNextQuestion();
     });

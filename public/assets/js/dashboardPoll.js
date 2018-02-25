@@ -55,10 +55,6 @@ $(document).ready(function () {
         });
     }
 
-    $(".kick-button").click(function (e) {
-        console.log(e);
-    });
-
     let chartAnswers = displayChartOnNextQuestion(ctx);
 });
 
@@ -70,9 +66,9 @@ function joinHandler(data) {
 
     tableBody.append(
         "<tr>" +
-            "<td>" + data.user + "</td>" +
+            "<td class='email-student-poll'>" + data.user + "</td>" +
             "<td>" +
-                '<button class="btn btn-block kick-button">Kick user</button>' +
+                '<button class="btn btn-block kick-button" onclick="triggerBlacklist(this);">Kick user</button>' +
             "</td>" +
         "</tr>"
     );
