@@ -14,6 +14,7 @@
     </div>
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
         <h1 class="h2">Poll n°<%= poll.id %></h1>
+        <button class="btn btn-primary delete-poll" data-id="<%= poll.id %>">Supprimer</button>
     </div>
     <p id="question-number">Questions : <%= poll.questions.length %></p>
     <p id="student-number">Students : <%= poll.students.size %></p>
@@ -26,14 +27,14 @@
         </thead>
         <tbody>
         <% for (var {key, student} of poll.students) { %>
-            <% if (student) { %>
-                <tr>
-                    <td><%= student %></td>
-                    <td>
-                        <button class="btn btn-block kick-button">Kick user</button>
-                    </td>
-                </tr>
-            <% } %>
+        <% if (student) { %>
+        <tr>
+            <td><%= student %></td>
+            <td>
+                <button class="btn btn-block kick-button">Kick user</button>
+            </td>
+        </tr>
+        <% } %>
         <% } %>
         </tbody>
     </table>
@@ -44,7 +45,7 @@
     </div>
     -->
 </main>
-<script type="text/javascript" src="../assets/js/dashboardPoll.js"></script>
 <script src="/socket.io/socket.io.js"></script>
+<script type="text/javascript" src="../assets/js/dashboardPoll.js"></script>
 
 <%- include('footer'); %>

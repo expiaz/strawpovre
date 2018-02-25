@@ -52,14 +52,11 @@ const bindSocket = function (provider, poll) {
             }
             bindAdmin(socket, user, poll, provider);
         } else {
-            bindStudent(socket, user, poll, provider);
-        }
-
-        if (poll.owner !== email) {
             provider.emit('server:student:join', {
                 user: email,
                 count: poll.students.size,
             });
+            bindStudent(socket, user, poll, provider);
         }
 
         // event bindings

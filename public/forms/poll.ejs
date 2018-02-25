@@ -5,11 +5,25 @@
     </label>
     Questions
     <fieldset class="template">
+        <select name="level" class="change">
+            <option value="">Niveau</option>
+            <% for(var i = 0; i < levels.length; i++) { %>
+                <option value="<%= levels[i].id %>"><%= levels[i].label %></option>
+            <% } %>
+        </select>
+        <select name="subject" class="change">
+            <option value="">Matière</option>
+            <% for(var i = 0; i < subjects.length; i++) { %>
+            <option value="<%= subjects[i].id %>"><%= subjects[i].label %></option>
+            <% } %>
+        </select>
         <select name="question[]" required>
+            <option value="">Question</option>
             <% for(var i = 0; i < questions.length; i++) { %>
                 <option value="<%= questions[i].id %>"><%= questions[i].label %></option>
             <% } %>
         </select>
+        <button style="display: none;" class="remove-template">Supprimer</button>
     </fieldset>
     <button class="add-template">Ajouter une question</button>
 </form>

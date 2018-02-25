@@ -60,6 +60,27 @@ $(document).ready(function () {
     });
 
     let chartAnswers = displayChartOnNextQuestion(ctx);
+
+
+    $('button.delete-poll').click(function (e) {
+        e.preventDefault();
+        $.ajax({
+            type: 'DELETE',
+            url: '/dashboard/poll',
+            data: {
+                id: $(e.target).attr('data-id')
+            }
+        }).done(function (res) {
+            if (res.success) {
+                window.location.replace('/dashboard');
+            } else {
+                console.log(res.error);
+            }
+        }).fail(function (err) {
+            console.log(err);
+        })
+        return false;
+    })
 });
 
 //Handle the join event

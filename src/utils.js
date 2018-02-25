@@ -1,4 +1,7 @@
-const mysql = require('mysql');
+const fs = require('fs');
+const path = require('path');
+const ejs = require('ejs');
+
 
 /**
  * wrap a callback function into a promise
@@ -27,7 +30,11 @@ const log = function() {
     console.log(...arguments);
 };
 
+const render = (view, ctx) =>
+    ejs.render(fs.readFileSync(path.join(__dirname, `../public/${view}.ejs`), {encoding: 'utf-8'}), ctx);
+
 module.exports = {
     promisify,
     log,
+    render
 };

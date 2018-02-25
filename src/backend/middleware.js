@@ -48,6 +48,13 @@ const pollAuth = (req, res, next) => {
     })(req, res, next);
 };
 
+const adminAuth = (req, res, next) => {
+    if (!req.user || !req.user.admin) {
+        return res.render('dashboard-login');
+    }
+    return next();
+};
+
 const formSchemaLogin = [
     body('email', 'Email requis')
         .exists()
@@ -101,6 +108,7 @@ const formSchemaPoll = [
 module.exports = {
     pollExists,
     pollAuth,
+    adminAuth,
     formSchemaLogin,
     validateFormSchema,
     formSchemaQuestion,
