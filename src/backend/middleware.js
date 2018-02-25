@@ -38,11 +38,15 @@ const pollAuth = (req, res, next) => {
             if (err) {
                 return next(err);
             }
+
+            const pollObj = req.poll;
+            pollObj.addStudent(user.email);
+
             log(`pollAuth ${poll} ${user.email} connected successfully`);
             next();
         });
     })(req, res, next);
-}
+};
 
 const formSchemaLogin = [
     body('email', 'Email requis')

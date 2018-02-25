@@ -57,6 +57,9 @@ app.post('/poll/:poll(\\w{5})',
 
 app.get('/poll/:poll(\\w{5})', pollExists, controller.login, controller.poll);
 
+//Update users (admin)
+app.post('/poll/:poll(\\w{5})/update-users', pollExists, controller.login, controller.updateUsers);
+
 app.post('/dashboard',
     formSchemaLogin,
     validateFormSchema((req, res, next, err) => res.render('dashboard-login', {
@@ -103,13 +106,12 @@ app.post('/dashboard/question', adminAuth, formSchemaQuestion, validateFormSchem
     success: false,
     error: err
 })), async (req, res) => {
-    if (!req.body.correct.find(v => Boolean(v|0))) {
+    if (!req.body.correct.find(v => Boolean(v | 0))) {
         return res.json({
             success: false,
             error: ['Au moins une réponse juste requise']
         });
     }
-    log(req.body);
     const { level, subject, label, answer, correct } = req.body;
     await createQuestion(
         label,
@@ -161,7 +163,7 @@ io.use(socketioSession);
     );
     log(`Poll created, go to /poll/${poll.id} and log with st1@st1.st1:abcd to see it`);
     log(`Bad poll created at /poll/${createPoll(io, 'abcd', new Prof('bad@bad.bad', 'bad', 'bad', [])).id}`)
-})()
+})();
 
 /*
 const t = () => {

@@ -73,8 +73,8 @@
             <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
                 <h1 class="h2">Poll n°<%= poll.id %></h1>
             </div>
-            <p>Questions : <%= poll.questions.length %></p>
-            <p>Students : <%= poll.students.size %></p>
+            <p id="question-number">Questions : <%= poll.questions.length %></p>
+            <p id="student-number">Students : <%= poll.students.size %></p>
             <table id="table-students" class="table">
                 <thead>
                 <tr>
@@ -83,13 +83,15 @@
                 </tr>
                 </thead>
                 <tbody>
-                    <% for(var student = 0; student < poll.students.size; student++) { %>
-                    <tr>
-                        <td><%= poll.students.get(student).name %></td>
-                        <td>
-                            <button value="blacklister"></button>
-                        </td>
-                    </tr>
+                    <% for (var {key, student} of poll.students) { %>
+                        <% if (student) { %>
+                        <tr>
+                            <td><%= student %></td>
+                            <td>
+                                <button class="btn btn-block kick-button">Kick user</button>
+                            </td>
+                        </tr>
+                        <% } %>
                     <% } %>
                 </tbody>
             </table>

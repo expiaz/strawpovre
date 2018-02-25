@@ -31,14 +31,26 @@ class Poll {
     }
 
     addStudent ({ email }) {
-        if (! this.students.has(email)) {
+        if (this.students.has(email)) {
             // already co, was disconnected
             return true;
         }
         if (! this.closed) {
+            log(`New user for poll ${this.id} : ${email}`);
             this.students.set(email, new Map());
         }
+
         return this.closed;
+    }
+
+    getStudentsRepresentation () {
+        let students = [];
+        this.students.forEach(function (key, student) {
+            if (student)
+                students.push(student);
+        });
+
+        return students;
     }
 
     addAnswer({ email }, answer) {
