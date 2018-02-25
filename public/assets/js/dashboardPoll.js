@@ -1,5 +1,3 @@
-const ctx = document.getElementById('chart-answers');
-
 const backgroundColors = [
     'rgba(255, 99, 132, 0.2)',
     'rgba(54, 162, 235, 0.2)',
@@ -43,6 +41,7 @@ function questionHandler(data) {
     content.html("<h3>" + data.label + "</h3>");
     content.append('<canvas id="chart-answers" width="400" height="400"></canvas>');
 
+    const ctx = document.getElementById('chart-answers');
     let chartAnswers = displayChartOnNextQuestion(ctx, data);
 }
 
@@ -51,18 +50,17 @@ function displayChartOnNextQuestion(ctx, question, questionNumber = 1) {
     if (!question)
         return;
     let answers = question.answers;
-    let data = [];
 
-    for (let i = 0; i < answers.length; i++) {
-        data[answers[i].id] = 0;
-    }
+    let data = Array(answers.length).fill(0);
+    let labels = answers.map(object => object.label);
 
     console.log(data);
+    console.log(labels);
 
     return chartAnswers = new Chart(ctx, {
         type: "bar",
         data: {
-            labels: ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
+            labels: labels,
             datasets: [{
                 label: 'Answers for the question n°' + questionNumber,
                 data: data,
@@ -83,9 +81,6 @@ function displayChartOnNextQuestion(ctx, question, questionNumber = 1) {
     });
 }
 
-let chartAnswers = displayChartOnNextQuestion(ctx);
-
-
 $('button.delete-poll').click(function (e) {
     e.preventDefault();
     $.ajax({
@@ -105,26 +100,3 @@ $('button.delete-poll').click(function (e) {
     });
     return false;
 });
-
-function questionHandler(data) {
-    console.log("let's go with : ");
-    console.log(data);
-
-    $("#content").html("<h3>" + data.label + "</h3>");
-}
-
-//Handle the join event
-function joinHandler(data) {
-    $("#student-number").text('Students : ' + data.count);
-    let tableBody = $("#table-students").find("tbody");
-    tableBody.text('');
-
-    tableBody.append(
-        "<tr>" +
-            "<td class='email-student-poll'>" + data.user + "</td>" +
-            "<td>" +
-                '<button class="btn btn-block kick-button" onclick="triggerBlacklist(this);">Kick user</button>' +
-            "</td>" +
-        "</tr>"
-    );
-}

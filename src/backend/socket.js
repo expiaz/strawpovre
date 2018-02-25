@@ -48,6 +48,7 @@ const bindSocket = function (provider, poll) {
                 user: email,
                 count: poll.students.size,
             });
+
             bindStudent(socket, user, poll, provider);
         }
 
