@@ -32,10 +32,12 @@ class Poll {
 
     addStudent ({ email }) {
         if (this.students.has(email)) {
+            log(`Student ${email} is already connected`);
             // already co, was disconnected
             return true;
         }
-        if (! this.closed && email) {
+
+        if (!this.closed && email) {
             log(`New user for poll ${this.id} : ${email}`);
             this.students.set(email, new Map());
         }

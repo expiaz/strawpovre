@@ -21,14 +21,6 @@ const bindSocket = function (provider, poll) {
         const { email, admin } = user;
         log(`Poll ${poll.id}, ${email} connected`);
 
-        socket.emit('server:poll:join', {
-            user: email,
-            length: poll.questions.length,
-            students: poll.getStudentsRepresentation(),
-            index: poll.index,
-            prof: poll.owner,
-        });
-
         /*
        on (event comes from front)
        client:admin:student:remove => blacklist a student
@@ -55,7 +47,16 @@ const bindSocket = function (provider, poll) {
             bindStudent(socket, user, poll, provider);
         }
 
+        socket.emit('server:poll:join', {
+            user: email,
+            length: poll.questions.length,
+            students: Array.from(poll.students.values()),
+            index: poll.index,
+            prof: poll.owner,
+        });
+
         if (poll.owner !== email) {
+            log(`Poll ${poll.id} event ${email} just joined`);
             provider.emit('server:student:join', {
                 user: email,
                 count: poll.students.size,
@@ -105,15 +106,11 @@ const bindAdmin = (socket, user, poll, provider) => {
 const bindStudent = (socket, user, poll, provider) => {
     const { email } = user;
     // add the student to the connected poll
-    if (!poll.addStudent({ email })) {
+    if (!poll.addStudent(user)) {
         // if it fails, the poll is closed
         socket.emit('server:poll:closed');
         socket.disconnect();
         return;
-    } else {
-        socket.on('server:poll:join', () => {
-            provider.emit('server:poll:join');
-        });
     }
 
     socket.on('client:student:answer', answer => {

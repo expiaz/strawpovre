@@ -44,7 +44,28 @@
     </div>
     -->
 </main>
-<script type="text/javascript" src="../assets/js/dashboardPoll.js"></script>
 <script src="/socket.io/socket.io.js"></script>
+<!-- EVENTS -->
+<script type="text/javascript" src="/assets/js/dashboardPoll.js"></script>
+<script type="text/javascript">
+    const socket = io('/<%= poll.id %>');
+
+    socket.on('server:student:join', packet => {
+        if (packet.user !== packet.prof) {
+            $.notify(
+                {message: packet.user + ' just joined the poll'},
+                {type: 'info'}
+            );
+            joinHandler(packet);
+        }
+    });
+
+    socket.on('server:user:disconnect', () => {
+        $.notify(
+            {message: 'A user just left the poll'},
+            {type: 'info'}
+        );
+    });
+</script>
 
 <%- include('footer'); %>
