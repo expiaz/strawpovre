@@ -23,6 +23,8 @@
                     </div>
                 </div>
                 <div class="poll-container"></div>
+
+                <!--TODO: react to blacklist (thibault) -->
             </div>
         </div>
     </div>
@@ -32,7 +34,7 @@
             crossorigin="anonymous"></script>
     <script src="/socket.io/socket.io.js"></script>
     <script>
-        var socket = io('/<%= poll.id %>');
+        const socket = io('/<%= poll.id %>');
     </script>
     <script src="/assets/js/poll.js"></script>
 
