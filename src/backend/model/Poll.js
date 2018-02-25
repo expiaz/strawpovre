@@ -71,7 +71,12 @@ class Poll {
         }
 
         const question = this.questions[this.index++];
-        return question;
+        return {
+            label: question.label,
+            answers: question.getAnswersForClient(),
+            id: question.id,
+            index: this.index
+        };
     }
 
     /**
