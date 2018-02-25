@@ -46,8 +46,9 @@ function questionHandler(data) {
 }
 
 function answerHandler(data) {
+    let answer = data.answer.answer;
     $.notify(
-        {message: 'An answer has been subscribed : ' + data.answer.label},
+        {message: 'An answer has been subscribed : ' + answer.label},
         {type: 'success'}
     );
 }

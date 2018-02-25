@@ -121,7 +121,6 @@ const bindStudent = (socket, user, poll, provider) => {
     }
 
     socket.on('client:student:answer', answer => {
-        console.log(answer);
         poll.addAnswer({ email }, answer.label);
         provider.emit('server:student:answer', {
             user,
