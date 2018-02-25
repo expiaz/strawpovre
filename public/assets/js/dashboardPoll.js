@@ -15,6 +15,8 @@ const borderColors = [
     'rgba(255, 159, 64, 1)'
 ];
 
+let chartAnswers;
+
 //Handlers the join event
 function joinHandler(data) {
     $("#student-number").text('Students : ' + data.count);
@@ -41,8 +43,8 @@ function questionHandler(data) {
     content.html("<h3>" + data.label + "</h3>");
     content.append('<canvas id="chart-answers" width="400" height="400"></canvas>');
 
-    const ctx = document.getElementById('chart-answers');
-    let chartAnswers = initChart(ctx, data);
+    let ctx = document.getElementById('chart-answers');
+    chartAnswers = initChart(ctx, data);
 }
 
 function answerHandler(data) {
@@ -51,6 +53,9 @@ function answerHandler(data) {
         {message: 'An answer has been subscribed : ' + answer.label},
         {type: 'success'}
     );
+
+    chartAnswers.data.datasets[0].data[chartAnswers.data.labels.indexOf(answer.label)]++;
+    chartAnswers.update();
 }
 
 //Charts
@@ -61,9 +66,6 @@ function initChart(ctx, question) {
 
     let data = Array(answers.length).fill(0);
     let labels = answers.map(object => object.label);
-
-    console.log(data);
-    console.log(labels);
 
     return chartAnswers = new Chart(ctx, {
         type: "bar",
