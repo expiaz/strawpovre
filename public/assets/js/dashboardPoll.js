@@ -58,6 +58,13 @@ $(document).ready(function () {
     let chartAnswers = displayChartOnNextQuestion(ctx);
 });
 
+function questionHandler(data) {
+    console.log("let's go with : ");
+    console.log(data);
+
+    $("#content").html("<h3>" + data.label + "</h3>");
+}
+
 //Handle the join event
 function joinHandler(data) {
     $("#student-number").text('Students : ' + data.count);

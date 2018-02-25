@@ -15,34 +15,32 @@
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
         <h1 class="h2">Poll n°<%= poll.id %></h1>
     </div>
-    <p id="question-number">Questions : <%= poll.questions.length %></p>
-    <p id="student-number">Students : <%= poll.students.size %></p>
-    <table id="table-students" class="table">
-        <thead>
-        <tr>
-            <th>Name</th>
-            <th>Action</th>
-        </tr>
-        </thead>
-        <tbody>
-        <% for (var student of poll.students) { %>
-        <% if (student) { %>
-                <tr>
-                    <td class="email-student-poll"><%= student[0] %></td>
-                    <td>
-                        <button class="btn btn-block kick-button" onclick="triggerBlacklist(this);">Kick user</button>
-                    </td>
-                </tr>
+    <div id="content">
+
+        <p id="question-number">Questions : <%= poll.questions.length %></p>
+        <p id="student-number">Students : <%= poll.students.size %></p>
+        <table id="table-students" class="table">
+            <thead>
+            <tr>
+                <th>Name</th>
+                <th>Action</th>
+            </tr>
+            </thead>
+            <tbody>
+            <% for (var student of poll.students) { %>
+            <% if (student) { %>
+            <tr>
+                <td class="email-student-poll"><%= student[0] %></td>
+                <td>
+                    <button class="btn btn-block kick-button" onclick="triggerBlacklist(this);">Kick user</button>
+                </td>
+            </tr>
             <% } %>
-        <% } %>
-        </tbody>
-    </table>
-    <button class="btn btn-lg btn-block" id="start-poll-button">Start the poll and finish the register</button>
-    <!--
-    <div class="container chart-container">
-        <canvas id="chart-answers" width="400" height="400"></canvas>
+            <% } %>
+            </tbody>
+        </table>
+        <button class="btn btn-lg btn-block" id="start-poll-button">Start the poll and finish the register</button>
     </div>
-    -->
 </main>
 <script src="/socket.io/socket.io.js"></script>
 <!-- EVENTS -->
@@ -74,6 +72,15 @@
         );
     });
 
+    socket.on('server:question:next', question => {
+        questionHandler(question);
+    });
+
+
+    $("#start-poll-button").click(function (e) {
+        socket.emit('client:admin:poll:start');
+    });
+
     function triggerBlacklist(elem) {
         if (!$(elem).prop("disabled")) {
             var student = $(elem).parent().parent().find(".email-student-poll").text();
@@ -83,10 +90,6 @@
             $(elem).prop("disabled", true);
         }
     }
-
-    $("#start-poll-button").click(function (e) {
-        socket.emit('client:admin:poll:start');
-    });
 </script>
 
 <%- include('footer'); %>

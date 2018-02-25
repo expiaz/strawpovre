@@ -70,7 +70,7 @@ const bindSocket = function (provider, poll) {
     });
 };
 
-const bindAdmin = (socket, user, poll) => {
+const bindAdmin = (socket, user, poll, provider) => {
     const { email } = user;
 
     const handleNextQuestion = () => {
@@ -79,8 +79,9 @@ const bindAdmin = (socket, user, poll) => {
             // no more
             return;
         }
+        log(`Poll ${poll.id} next question requested : ${question.label}`);
         // send to everyone else in the room
-        socket.broadcast.emit('server:question:next', question);
+        provider.emit('server:question:next', question);
         return question;
     };
 
