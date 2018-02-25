@@ -11495,22 +11495,19 @@ a.text-dark:focus
     }
 }
 
-html,
-body
-{
-    height: 100%;
-}
-
 .login
 {
     display: -ms-flexbox;
     display: -webkit-box;
     display: flex;
 
+    height: 100%; 
     padding-top: 40px;
     padding-bottom: 40px;
 
-    background-color: #f5f5f5; 
+    text-align: center;
+
+    background-color: #f5f5f5;
 
     -ms-flex-align: center;
     -ms-flex-pack: center;
@@ -11565,6 +11562,11 @@ body
 
     border-top-left-radius: 0;
     border-top-right-radius: 0;
+}
+
+html
+{
+    height: 100%;
 }
 
 .poll

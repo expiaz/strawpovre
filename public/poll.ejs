@@ -37,22 +37,8 @@
             </div>
         </div>
     </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="assets/js/poll.js"></script>
 </body>
 </html>
-
-<script src="/socket.io/socket.io.js"></script>
-<script>
-    var socket = io('/<%= poll.id %>');
-
-    socket.on('server:poll:join', packet => {
-        console.log(packet);
-    });
-
-    /**
-     * répondre à une question
-     * socket.emit('question.answer', {
-     *      question: question.id,
-     *      answer: 'My answer'
-     * });
-     */
-</script>
