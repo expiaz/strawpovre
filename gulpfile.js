@@ -18,7 +18,7 @@ gulp.task('css',function(){
         );
 });
 
-gulp.task('js', function() {
+/**gulp.task('js', function() {
     const b = browserify({
         entries: src + '/frontend/js/app.js',
         transform: babelify,
@@ -32,7 +32,7 @@ gulp.task('js', function() {
         .pipe(plugins.concat("bundle.js"))
         .pipe(plugins.sourcemaps.write("."))
         .pipe(gulp.dest(destination +'/assets/js/'));
-});
+});**/
 
 gulp.task('minify',function(){
     return gulp.src(destination +'/assets/css/*.css')
@@ -42,7 +42,7 @@ gulp.task('minify',function(){
         );
 });
 
-gulp.task('build',['css', 'js']);
+gulp.task('build',['css']);
 
 gulp.task('prod',['build','minify']);
 
