@@ -75,6 +75,7 @@ class Poll {
             label: question.label,
             answers: question.getAnswersForClient(),
             id: question.id,
+            count: this.questions.length,
             index: this.index
         };
     }
