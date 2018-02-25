@@ -83,28 +83,27 @@ function displayChartOnNextQuestion(ctx, question, questionNumber = 1) {
     });
 }
 
-    let chartAnswers = displayChartOnNextQuestion(ctx);
+let chartAnswers = displayChartOnNextQuestion(ctx);
 
 
-    $('button.delete-poll').click(function (e) {
-        e.preventDefault();
-        $.ajax({
-            type: 'DELETE',
-            url: '/dashboard/poll',
-            data: {
-                id: $(e.target).attr('data-id')
-            }
-        }).done(function (res) {
-            if (res.success) {
-                window.location.replace('/dashboard');
-            } else {
-                console.log(res.error);
-            }
-        }).fail(function (err) {
-            console.log(err);
-        })
-        return false;
-    })
+$('button.delete-poll').click(function (e) {
+    e.preventDefault();
+    $.ajax({
+        type: 'DELETE',
+        url: '/dashboard/poll',
+        data: {
+            id: $(e.target).attr('data-id')
+        }
+    }).done(function (res) {
+        if (res.success) {
+            window.location.replace('/dashboard');
+        } else {
+            console.log(res.error);
+        }
+    }).fail(function (err) {
+        console.log(err);
+    });
+    return false;
 });
 
 function questionHandler(data) {
@@ -129,28 +128,3 @@ function joinHandler(data) {
         "</tr>"
     );
 }
-
-//Events
-let socket = io('/<%= poll.id %>');
-
-socket.on('server:student:join', packet => {
-    if (packet.user !== packet.prof) {
-        $.notify(
-            {message: 'A user just joined the poll'},
-            {type: 'info'}
-        );
-        console.log(packet);
-        joinHandler(packet);
-    }
-});
-
-socket.on('server:user:disconnect', () => {
-    $.notify(
-        {message: 'A user just left the poll'},
-        {type: 'info'}
-    );
-});
-
-$("#start-poll-button").click(function (e) {
-    socket.emit('client:admin:poll:start');
-});
