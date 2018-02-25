@@ -3,12 +3,28 @@ const helmet = require('helmet');
 const socketio = require('socket.io');
 const path = require('path');
 const passport = require('passport');
+const expressValidator = require('express-validator');
 
 require('./src/backend/passport');
 
 const {expressSession, socketioSession} = require('./src/backend/session');
-const {pollExists, pollAuth, formSchemaLogin, validateLoginFormSchema} = require('./src/backend/middleware');
-const {createPoll, destroyPoll, getAllQuestions} = require('./src/backend/repository');
+const {
+    pollExists,
+    pollAuth,
+    formSchemaLogin,
+    formSchemaQuestion,
+    formSchemaPoll,
+    validateFormSchema
+} = require('./src/backend/middleware');
+const {
+    createPoll,
+    destroyPoll,
+    getAllQuestions,
+    getQuestion,
+    getAllSubjects,
+    getAllLevels,
+    createQuestion
+} = require('./src/backend/repository');
 const {log} = require('./src/utils');
 const controller = require('./src/backend/controller');
 const config = require('./src/config');
@@ -24,12 +40,15 @@ app.use(express.urlencoded({extended: true}));
 app.use(expressSession);
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(expressValidator());
 app.use(express.static(config.express.dist));
 
 app.post('/poll/:poll(\\w{5})',
     pollExists,
     formSchemaLogin,
-    validateLoginFormSchema('poll-login'),
+    validateFormSchema((req, res, next, err) => res.render('poll-login', {
+        error: err[0]
+    })),
     pollAuth, (req, res) => {
         const {poll = ''} = req.params;
         log(`post ${poll} auth ok redirect`);
@@ -40,18 +59,22 @@ app.get('/poll/:poll(\\w{5})', pollExists, controller.login, controller.poll);
 
 app.post('/dashboard',
     formSchemaLogin,
-    validateLoginFormSchema('dashboard-login'),
+    validateFormSchema((req, res, next, err) => res.render('dashboard-login', {
+        error: err[0]
+    })),
     passport.authenticate('local', {
         failureRedirect: '/dashboard',
         successRedirect: '/dashboard'
     }));
 
-app.get('/dashboard', (req, res, next) => {
+var adminAuth = (req, res, next) => {
     if (!req.user || !req.user.admin) {
         return res.render('dashboard-login');
     }
     return next();
-}, controller.dashboard);
+};
+
+app.get('/dashboard', adminAuth, controller.dashboard);
 
 // add a poll
 // app.post('/dashboard/poll', formSchemaPoll, (req, res, next) => {
@@ -63,8 +86,59 @@ app.get('/dashboard', (req, res, next) => {
 //Update users (admin)
 app.post('/poll/:poll(\\w{5})/update-users', controller.updateUsers);
 
-app.post('/dashboard/poll', (req, res) => {
+app.get('/modal/question', adminAuth, async (req, res) => {
+    return res.render('forms/question', {
+        subjects: await getAllSubjects(),
+        levels: await getAllLevels()
+    })
+});
+
+app.get('/modal/poll', adminAuth, async (req, res) => {
+    return res.render('forms/poll', {
+        questions: await getAllQuestions()
+    })
+});
+
+app.post('/dashboard/question', adminAuth, formSchemaQuestion, validateFormSchema((req, res, next, err) => res.json({
+    success: false,
+    error: err
+})), async (req, res) => {
+    if (!req.body.correct.find(v => Boolean(v|0))) {
+        return res.json({
+            success: false,
+            error: ['Au moins une réponse juste requise']
+        });
+    }
     log(req.body);
+    const { level, subject, label, answer, correct } = req.body;
+    await createQuestion(
+        label,
+        subject,
+        level,
+        answer.map((label, i) => ({
+            label,
+            correct: !!correct[i]
+        }))
+    );
+    return res.json({
+        success: true,
+    });
+});
+
+app.post('/dashboard/poll', adminAuth, formSchemaPoll, validateFormSchema((req, res, next, err) => res.json({
+    success: false,
+    error: err
+})), async (req, res) => {
+    log(req.body);
+    const { password, question } = req.body;
+    const poll = createPoll(io, password, req.user, question.map(async id => await getQuestion(id)));
+    return res.json({
+        success: true,
+        poll: {
+            id: poll.id,
+            length: poll.questions.length
+        }
+    });
 });
 
 app.get('/logout', (req, res) => {

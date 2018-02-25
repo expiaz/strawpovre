@@ -1,0 +1,32 @@
+<form class="question-modal">
+    <label>
+        Niveau
+        <select name="level" required>
+            <% for(var i = 0; i < levels.length; i++) { %>
+                <option value="<%= levels[i].id %>"><%= levels[i].label %></option>
+            <% } %>
+        </select>
+    </label>
+    <label>
+        Matière
+        <select name="subject" required>
+            <% for(var i = 0; i < subjects.length; i++) { %>
+            <option value="<%= subjects[i].id %>"><%= subjects[i].label %></option>
+            <% } %>
+        </select>
+    </label>
+    <label>
+        Intitulé
+        <input name="label">
+    </label>
+    Réponses
+    <fieldset class="template">
+        <input name="answer[]" required>
+        Correcte
+        <input type="hidden" name="correct[]" value="0" />
+        <input type="checkbox" name="correct[]" onclick="this.checked ? this.previousElementSibling.setAttribute('disabled', true) : this.previousElementSibling.removeAttribute('disabled')" value="1">
+        <button style="display: none;" class="remove-template">Supprimer</button>
+    </fieldset>
+    <button class="add-template">Ajouter une réponse</button>
+</form>
+<div class="error"></div>

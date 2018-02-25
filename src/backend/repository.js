@@ -107,7 +107,7 @@ const createQuestion = (label, level, subject, answers = []) => {
         level,
         subject
     }).then(results => {
-        const questionId = results.insertedId;
+        const questionId = results.insertId;
         return Promise.all(
             answers.map(({ label, correct }) => query('INSERT INTO `answer` SET ?', {
                 label,
@@ -115,7 +115,7 @@ const createQuestion = (label, level, subject, answers = []) => {
                 correct
             })
             .then(res => {
-                const answerId = res.insertedId;
+                const answerId = res.insertId;
                 return new Answer(answerId, questionId, label, correct);
             }))
         ).then(answers => new Question(questionId, label, level, subject, answers))
@@ -212,4 +212,7 @@ module.exports = {
     destroyPoll,
     getQuestion,
     getAllQuestions,
+    getAllSubjects,
+    getAllLevels,
+    createQuestion
 };

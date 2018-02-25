@@ -50,15 +50,11 @@ passport.use('poll', new CustomStrategy((req, done) => {
 }));
 
 passport.serializeUser(function (user, done) {
-    log(`serializeUser`, user);
-
     const { admin, email, poll = '' } = user;
     done(null, { admin, email, poll });
 });
 
 passport.deserializeUser(function ({ admin, email, poll }, done) {
-    log(`deserializeUser ${email}`);
-
     if (admin) {
         return getProf({ email })
             .then(prof => done(null, prof))

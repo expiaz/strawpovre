@@ -60,6 +60,9 @@ CREATE TABLE question (
   CONSTRAINT FK_questionSubject FOREIGN KEY (`subject`) REFERENCES `subject`(`id`)  ON DELETE CASCADE,
   CONSTRAINT FK_questionLevel FOREIGN KEY (`level`) REFERENCES `level`(`id`)  ON DELETE CASCADE
 );
+
+CREATE UNIQUE INDEX `IDX_label_subject_level` ON `question`(`label`, `level`, `subject`);
+
 -- ANSWER
 DROP TABLE IF EXISTS answer;
 CREATE TABLE answer (

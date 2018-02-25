@@ -1,0 +1,16 @@
+<form class="question-modal">
+    <label>
+        Mot de passe (4 caractères)
+        <input type="text" name="password" required min="4">
+    </label>
+    Questions
+    <fieldset class="template">
+        <select name="question[]" required>
+            <% for(var i = 0; i < questions.length; i++) { %>
+                <option value="<%= questions[i].id %>"><%= questions[i].label %></option>
+            <% } %>
+        </select>
+    </fieldset>
+    <button class="add-template">Ajouter une question</button>
+</form>
+<div class="error"></div>

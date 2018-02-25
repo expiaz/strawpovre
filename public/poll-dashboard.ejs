@@ -13,9 +13,9 @@
     <link rel="stylesheet" href="/assets/css/styles.css">
     <title>Admin</title>
 </head>
-<body class="dashboard" onload="init();">
+<body class="dashboard">
 <nav class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0">
-    <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="/dashboard">StrawPovre</a>
+    <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="/">StrawPovre</a>
     <ul class="navbar-nav px-3">
         <li class="nav-item text-nowrap">
             <a class="nav-link" href="/logout">Sign out</a>
@@ -28,7 +28,7 @@
             <div class="sidebar-sticky">
                 <ul class="nav flex-column">
                     <li class="nav-item">
-                        <a class="nav-link active" href="#">
+                        <a class="nav-link active" href="/dashboard">
                             Dashboard</a>
                     </li>
                 </ul>
@@ -110,6 +110,7 @@
         integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn"
         crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.bundle.js"></script>
+<script type="text/javascript" src="../assets/js/bootstrap-notify.min.js"></script>
 <script src="/socket.io/socket.io.js"></script>
 <script type="text/javascript" src="../assets/js/bootstrap-notify.min.js"></script>
 <script type="text/javascript" src="../assets/js/dashboardPoll.js"></script>

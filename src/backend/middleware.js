@@ -45,31 +45,60 @@ const pollAuth = (req, res, next) => {
 }
 
 const formSchemaLogin = [
-    body('email')
+    body('email', 'Email requis')
         .exists()
-        .withMessage('Email requis')
+        .isLength({min: 1})
         .trim()
         .normalizeEmail(),
-    body('password')
+    body('password', 'Mot de passe requis')
         .exists()
-        .withMessage('Mot de passe requis')
+        .isLength({min: 1})
 ];
 
-const validateLoginFormSchema = view =>
+const validateFormSchema = onErr =>
     (req, res, next) => {
-        const error = validationResult(req);
-        if (!error.isEmpty()) {
-            const {email = {}, password = {}} = error.mapped();
-            return res.render(view, {
-                error: email.msg || password.msg
-            });
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return onErr(req, res, next, errors.array().map(err => err.msg));
         }
         return next();
     }
+
+const formSchemaQuestion = [
+    body('level', 'Niveau requis')
+        .exists()
+        .isLength({min: 1})
+        .isInt(),
+    body('subject', 'Matière requise')
+        .exists()
+        .isLength({min: 1})
+        .isInt(),
+    body('label', 'Label requis')
+        .exists()
+        .isLength({min: 1}),
+    body('answer', 'Au moins une réponse requise')
+        .exists()
+        .isLength({min: 1}),
+    body('correct', 'Au moins une réponse correcte requise')
+        .exists()
+        .isLength({min: 1})
+];
+
+const formSchemaPoll = [
+    body('password', 'Mot de passe requis (min 4 caractères)')
+        .exists()
+        .trim()
+        .isLength({min: 4}),
+    body('question', 'Au moins une question est requise')
+        .exists()
+        .isLength({min: 1})
+];
 
 module.exports = {
     pollExists,
     pollAuth,
     formSchemaLogin,
-    validateLoginFormSchema
+    validateFormSchema,
+    formSchemaQuestion,
+    formSchemaPoll
 }
