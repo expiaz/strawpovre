@@ -70,12 +70,8 @@ class Poll {
             return;
         }
 
-        const { label, answer } = this.questions[this.index++];
-        return {
-            label,
-            answer,
-            index: this.index
-        };
+        const question = this.questions[this.index++];
+        return question;
     }
 
     /**
