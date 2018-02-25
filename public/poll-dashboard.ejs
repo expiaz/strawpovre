@@ -1,122 +1,49 @@
-<!--dashboard-->
+<%- include('header', {polls: polls, title: 'Poll dashboard'}); %>
 
-<!--liste de poll-->
-<!--creation de poll-->
-<!--edition, suppression, creation-->
-<!doctype html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="stylesheet" href="/assets/css/styles.css">
-    <title>Admin</title>
-</head>
-<body class="dashboard">
-<nav class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0">
-    <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="/">StrawPovre</a>
-    <ul class="navbar-nav px-3">
-        <li class="nav-item text-nowrap">
-            <a class="nav-link" href="/logout">Sign out</a>
-        </li>
-    </ul>
-</nav>
-<div class="container-fluid">
-    <div class="row">
-        <nav class="col-md-2 d-none d-md-block bg-light sidebar">
-            <div class="sidebar-sticky">
-                <ul class="nav flex-column">
-                    <li class="nav-item">
-                        <a class="nav-link active" href="/dashboard">
-                            Dashboard</a>
-                    </li>
-                </ul>
-                <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
-                    <span>Polls</span>
-                    <a class="d-flex align-items-center text-muted" href="#">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                             class="feather feather-plus-circle">
-                            <circle cx="12" cy="12" r="10"></circle>
-                            <line x1="12" y1="8" x2="12" y2="16"></line>
-                            <line x1="8" y1="12" x2="16" y2="12"></line>
-                        </svg>
-                    </a>
-                </h6>
-                <ul class="nav flex-column mb-2">
-                    <li class="nav-item">
-                        <% if (polls) { %>
-                            <% for (var i = 0; i < polls.length; i++) { %>
-                                <a class="nav-link" href="/poll/<%= polls[i].id %>">
-                                    <span class="far fa-file-alt"></span>
-                                    <%= polls[i].id %> (Question : <%= polls[i].questions.length %>)
-                                </a>
-                            <% }
-                        } %>
-                    </li>
-                </ul>
-            </div>
-        </nav>
-        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
-            <div class="chartjs-size-monitor"
-                 style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; pointer-events: none; visibility: hidden; z-index: -1;">
-                <div class="chartjs-size-monitor-expand"
-                     style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;">
-                    <div style="position:absolute;width:1000000px;height:1000000px;left:0;top:0"></div>
-                </div>
-                <div class="chartjs-size-monitor-shrink"
-                     style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;">
-                    <div style="position:absolute;width:200%;height:200%;left:0; top:0"></div>
-                </div>
-            </div>
-            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
-                <h1 class="h2">Poll n°<%= poll.id %></h1>
-            </div>
-            <p id="question-number">Questions : <%= poll.questions.length %></p>
-            <p id="student-number">Students : <%= poll.students.size %></p>
-            <table id="table-students" class="table">
-                <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Action</th>
-                </tr>
-                </thead>
-                <tbody>
-                    <% for (var {key, student} of poll.students) { %>
-                        <% if (student) { %>
-                        <tr>
-                            <td><%= student %></td>
-                            <td>
-                                <button class="btn btn-block kick-button">Kick user</button>
-                            </td>
-                        </tr>
-                        <% } %>
-                    <% } %>
-                </tbody>
-            </table>
-            <button class="btn btn-block" onclick="onUsersUpdate('/poll/<%= poll.id %>/update-users', '<%= poll.id %>')">Test Ajax</button>
-            <div class="container chart-container">
-                <canvas id="chart-answers" width="400" height="400"></canvas>
-            </div>
-        </main>
+<main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
+    <div class="chartjs-size-monitor"
+         style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; pointer-events: none; visibility: hidden; z-index: -1;">
+        <div class="chartjs-size-monitor-expand"
+             style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;">
+            <div style="position:absolute;width:1000000px;height:1000000px;left:0;top:0"></div>
+        </div>
+        <div class="chartjs-size-monitor-shrink"
+             style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;">
+            <div style="position:absolute;width:200%;height:200%;left:0; top:0"></div>
+        </div>
     </div>
-</div>
-<script src="http://code.jquery.com/jquery-3.3.1.min.js"
-        integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
-        crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js"
-        integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb"
-        crossorigin="anonymous"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js"
-        integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn"
-        crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.bundle.js"></script>
-<script type="text/javascript" src="../assets/js/bootstrap-notify.min.js"></script>
-<script src="/socket.io/socket.io.js"></script>
-<script type="text/javascript" src="../assets/js/bootstrap-notify.min.js"></script>
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+        <h1 class="h2">Poll n°<%= poll.id %></h1>
+    </div>
+    <p id="question-number">Questions : <%= poll.questions.length %></p>
+    <p id="student-number">Students : <%= poll.students.size %></p>
+    <table id="table-students" class="table">
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>Action</th>
+        </tr>
+        </thead>
+        <tbody>
+        <% for (var {key, student} of poll.students) { %>
+        <% if (student) { %>
+        <tr>
+            <td><%= student %></td>
+            <td>
+                <button class="btn btn-block kick-button">Kick user</button>
+            </td>
+        </tr>
+        <% } %>
+        <% } %>
+        </tbody>
+    </table>
+    <button class="btn btn-block">Test Ajax</button>
+    <div class="container chart-container">
+        <canvas id="chart-answers" width="400" height="400"></canvas>
+    </div>
+</main>
 <script type="text/javascript" src="../assets/js/dashboardPoll.js"></script>
-
+<script src="/socket.io/socket.io.js"></script>
 <!-- events -->
 <script type="text/javascript">
 
@@ -138,5 +65,5 @@
         );
     });
 </script>
-</body>
-</html>
+
+<%- include('footer'); %>

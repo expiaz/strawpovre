@@ -70,8 +70,8 @@ const getPoll = id => new Promise((resolve, reject) => {
  * @param prof {Prof}
  * @return {Promise}
  */
-const getPollsOf = prof =>
-    Array.from(polls.values()).filter(poll => poll.owner === prof.email);
+const getPollsOf = ({ email }) =>
+    Array.from(polls.values()).filter(poll => poll.owner === email);
 
 /**
  *
