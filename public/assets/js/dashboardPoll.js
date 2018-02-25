@@ -64,23 +64,41 @@ $(document).ready(function () {
 
 //Handle the join event
 function joinHandler(data) {
-    $("#student-number").text('Students : ' + data.students.size);
-
+    $("#student-number").text('Students : ' + data.count);
     let tableBody = $("#table-students").find("tbody");
     tableBody.text('');
 
-    if (data.students && typeof poll.students[Symbol.iterator] === 'function') {
-        data.students.forEach(function (student) {
-            if (student) {
-                tableBody.append(
-                    "<tr>" +
-                        "<td>" + student + "</td>" +
-                        "<td>" +
-                            '<button class="btn btn-block kick-button">Kick user</button>' +
-                        "</td>" +
-                    "</tr>"
-                );
-            }
-        })
-    }
+    tableBody.append(
+        "<tr>" +
+            "<td>" + data.user + "</td>" +
+            "<td>" +
+                '<button class="btn btn-block kick-button">Kick user</button>' +
+            "</td>" +
+        "</tr>"
+    );
 }
+
+//Events
+let socket = io('/<%= poll.id %>');
+
+socket.on('server:student:join', packet => {
+    if (packet.user !== packet.prof) {
+        $.notify(
+            {message: 'A user just joined the poll'},
+            {type: 'info'}
+        );
+        console.log(packet);
+        joinHandler(packet);
+    }
+});
+
+socket.on('server:user:disconnect', () => {
+    $.notify(
+        {message: 'A user just left the poll'},
+        {type: 'info'}
+    );
+});
+
+$("#start-poll-button").click(function (e) {
+    socket.emit('client:admin:poll:start');
+});

@@ -59,9 +59,6 @@ app.post('/poll/:poll(\\w{5})',
 
 app.get('/poll/:poll(\\w{5})', pollExists, controller.login, controller.poll);
 
-//Update users (admin)
-app.post('/poll/:poll(\\w{5})/update-users', pollExists, controller.login, controller.updateUsers);
-
 app.post('/dashboard',
     formSchemaLogin,
     validateFormSchema((req, res, next, err) => res.render('dashboard-login', {
@@ -87,9 +84,6 @@ app.get('/dashboard', adminAuth, controller.dashboard);
 // }, (req, res) => res.redirect('/dashboard'));
 // delete a poll
 // app.delete('/dashboard/poll/:id(\\d+)')
-
-//Update users (admin)
-app.post('/poll/:poll(\\w{5})/update-users', controller.updateUsers);
 
 app.get('/modal/question', adminAuth, async (req, res) => {
     return res.render('forms/question', {

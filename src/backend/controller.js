@@ -39,18 +39,8 @@ const dashboard = (req, res) => {
     });
 };
 
-const updateUsers = (req, res) => {
-    const { poll } = req;
-    log(`controller updating connected students`);
-    return res.json({
-        message: "Update connected students",
-        students: poll.getStudentsRepresentation(),
-    });
-};
-
 module.exports = {
     login,
     poll,
     dashboard,
-    updateUsers,
 };

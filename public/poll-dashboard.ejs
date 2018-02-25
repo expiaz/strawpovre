@@ -26,45 +26,25 @@
         </thead>
         <tbody>
         <% for (var {key, student} of poll.students) { %>
-        <% if (student) { %>
-        <tr>
-            <td><%= student %></td>
-            <td>
-                <button class="btn btn-block kick-button">Kick user</button>
-            </td>
-        </tr>
-        <% } %>
+            <% if (student) { %>
+                <tr>
+                    <td><%= student %></td>
+                    <td>
+                        <button class="btn btn-block kick-button">Kick user</button>
+                    </td>
+                </tr>
+            <% } %>
         <% } %>
         </tbody>
     </table>
-    <button class="btn btn-block">Test Ajax</button>
+    <button class="btn btn-lg btn-block" id="start-poll-button">Start the poll and finish the register</button>
+    <!--
     <div class="container chart-container">
         <canvas id="chart-answers" width="400" height="400"></canvas>
     </div>
+    -->
 </main>
 <script type="text/javascript" src="../assets/js/dashboardPoll.js"></script>
 <script src="/socket.io/socket.io.js"></script>
-<!-- events -->
-<script type="text/javascript">
-
-    let socket = io('/<%= poll.id %>');
-
-    socket.on('server:poll:join', packet => {
-        if (packet.user !== packet.prof) {
-            $.notify(
-                {message: 'A user just joined the poll'},
-                {type: 'info'}
-            );
-            joinHandler(packet);
-        }
-    });
-
-    socket.on('server:user:disconnect', () => {
-        $.notify(
-            {message: 'A user just left the poll'},
-            {type: 'info'}
-        );
-    });
-</script>
 
 <%- include('footer'); %>
