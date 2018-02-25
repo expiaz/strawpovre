@@ -55,10 +55,6 @@ $(document).ready(function () {
         });
     }
 
-    $(".kick-button").click(function (e) {
-        console.log(e);
-    });
-
     let chartAnswers = displayChartOnNextQuestion(ctx);
 
 
@@ -83,6 +79,13 @@ $(document).ready(function () {
     })
 });
 
+function questionHandler(data) {
+    console.log("let's go with : ");
+    console.log(data);
+
+    $("#content").html("<h3>" + data.label + "</h3>");
+}
+
 //Handle the join event
 function joinHandler(data) {
     $("#student-number").text('Students : ' + data.count);
@@ -91,9 +94,9 @@ function joinHandler(data) {
 
     tableBody.append(
         "<tr>" +
-            "<td>" + data.user + "</td>" +
+            "<td class='email-student-poll'>" + data.user + "</td>" +
             "<td>" +
-                '<button class="btn btn-block kick-button">Kick user</button>' +
+                '<button class="btn btn-block kick-button" onclick="triggerBlacklist(this);">Kick user</button>' +
             "</td>" +
         "</tr>"
     );

@@ -1,4 +1,4 @@
-const { log } = require('../../utils');
+const {log} = require('../../utils');
 
 class Question {
 
@@ -18,7 +18,7 @@ class Question {
         this.answers = answers;
     }
 
-    addAnswer ({ id }) {
+    addAnswer({id}) {
         if (this.answers.indexOf(id) === -1)
             return false;
 
@@ -31,7 +31,7 @@ class Question {
      * @param answer {Answer}
      * @returns {boolean}
      */
-    checkAnswer (answer) {
+    checkAnswer(answer) {
         //Given answer is not part of the possible answers
         if (this.answers.indexOf(answer.id) === -1)
             return false;
@@ -43,6 +43,20 @@ class Question {
         });
 
         return isCorrect;
+    }
+
+    getAnswersForClient() {
+        let answers = [];
+
+        this.answers.forEach(function (answer) {
+            answers.push({
+                id: answer.id,
+                label: answer.label,
+                number: answer.number
+            });
+        });
+
+        return answers;
     }
 }
 

@@ -33,6 +33,9 @@ const pollAuth = (req, res, next) => {
                 error: 'Identifiants incorrects'
             });
         }
+        if (req.poll.blacklist.indexOf(user.email) !== -1) {
+            return next("You have been blacklisted");
+        }
         req.user = user;
         req.login(user, err => {
             if (err) {

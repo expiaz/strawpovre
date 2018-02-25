@@ -16,6 +16,7 @@ class Poll {
 
         this.questions = questions;
         this.students = new Map();
+        this.blacklist = [];
         this.index = 0;
         this.closed = false;
         this.ns = namespace;
@@ -32,10 +33,12 @@ class Poll {
 
     addStudent ({ email }) {
         if (this.students.has(email)) {
+            log(`Student ${email} is already connected`);
             // already co, was disconnected
             return true;
         }
-        if (! this.closed && email) {
+
+        if (!this.closed && email && this.blacklist.indexOf(email) === -1) {
             log(`New user for poll ${this.id} : ${email}`);
             this.students.set(email, new Map());
         }
@@ -43,14 +46,14 @@ class Poll {
         return !this.closed;
     }
 
-    getStudentsRepresentation () {
-        let students = [];
-        this.students.forEach(function (key, student) {
-            if (student)
-                students.push(student);
-        });
+    removeStudent (email) {
+        if (!this.closed && email) {
+            log(`Removing user for poll ${this.id} : ${email}`);
+            this.students.delete(email);
+            this.blacklist.push(email);
+        }
 
-        return students;
+        return !this.closed;
     }
 
     addAnswer({ email }, answer) {
@@ -67,10 +70,11 @@ class Poll {
             return;
         }
 
-        const { label, answer } = this.questions[this.index++];
+        const question = this.questions[this.index++];
         return {
-            label,
-            answer,
+            label: question.label,
+            answers: question.getAnswersForClient(),
+            id: question.id,
             index: this.index
         };
     }

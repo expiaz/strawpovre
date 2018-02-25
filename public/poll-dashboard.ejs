@@ -16,36 +16,80 @@
         <h1 class="h2">Poll n°<%= poll.id %></h1>
         <button class="btn btn-primary delete-poll" data-id="<%= poll.id %>">Supprimer</button>
     </div>
-    <p id="question-number">Questions : <%= poll.questions.length %></p>
-    <p id="student-number">Students : <%= poll.students.size %></p>
-    <table id="table-students" class="table">
-        <thead>
-        <tr>
-            <th>Name</th>
-            <th>Action</th>
-        </tr>
-        </thead>
-        <tbody>
-        <% for (var {key, student} of poll.students) { %>
-        <% if (student) { %>
-        <tr>
-            <td><%= student %></td>
-            <td>
-                <button class="btn btn-block kick-button">Kick user</button>
-            </td>
-        </tr>
-        <% } %>
-        <% } %>
-        </tbody>
-    </table>
-    <button class="btn btn-lg btn-block" id="start-poll-button">Start the poll and finish the register</button>
-    <!--
-    <div class="container chart-container">
-        <canvas id="chart-answers" width="400" height="400"></canvas>
+    <div id="content">
+
+        <p id="question-number">Questions : <%= poll.questions.length %></p>
+        <p id="student-number">Students : <%= poll.students.size %></p>
+        <table id="table-students" class="table">
+            <thead>
+            <tr>
+                <th>Name</th>
+                <th>Action</th>
+            </tr>
+            </thead>
+            <tbody>
+            <% for (var student of poll.students) { %>
+            <% if (student) { %>
+            <tr>
+                <td class="email-student-poll"><%= student[0] %></td>
+                <td>
+                    <button class="btn btn-block kick-button" onclick="triggerBlacklist(this);">Kick user</button>
+                </td>
+            </tr>
+            <% } %>
+            <% } %>
+            </tbody>
+        </table>
+        <button class="btn btn-lg btn-block" id="start-poll-button">Start the poll and finish the register</button>
     </div>
-    -->
 </main>
 <script src="/socket.io/socket.io.js"></script>
-<script type="text/javascript" src="../assets/js/dashboardPoll.js"></script>
+<script type="text/javascript" src="/assets/js/dashboardPoll.js"></script>
+<script type="text/javascript">
+    const socket = io('/<%= poll.id %>');
+
+    socket.on('server:student:join', packet => {
+        if (packet.user !== packet.prof) {
+            $.notify(
+                {message: packet.user + ' just joined the poll'},
+                {type: 'info'}
+            );
+            joinHandler(packet);
+        }
+    });
+
+    socket.on('server:admin:blacklist:user', packet => {
+        $.notify(
+            {message: packet.user + ' has been blacklisted from the poll'},
+            {type: 'danger'}
+        );
+    });
+
+    socket.on('server:user:disconnect', () => {
+        $.notify(
+            {message: 'A user just left the poll'},
+            {type: 'info'}
+        );
+    });
+
+    socket.on('server:question:next', question => {
+        questionHandler(question);
+    });
+
+
+    $("#start-poll-button").click(function (e) {
+        socket.emit('client:admin:poll:start');
+    });
+
+    function triggerBlacklist(elem) {
+        if (!$(elem).prop("disabled")) {
+            var student = $(elem).parent().parent().find(".email-student-poll").text();
+            socket.emit('client:admin:student:remove', {
+                user: student,
+            });
+            $(elem).prop("disabled", true);
+        }
+    }
+</script>
 
 <%- include('footer'); %>
