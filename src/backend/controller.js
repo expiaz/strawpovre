@@ -42,11 +42,9 @@ const dashboard = (req, res) => {
 const updateUsers = (req, res) => {
     const { poll } = req;
     log(`controller updating connected students`);
-    console.log(poll.getStudentsRepresentation());
     return res.json({
         message: "Update connected students",
         students: poll.getStudentsRepresentation(),
-        count: poll.students.size,
     });
 };
 

@@ -60,9 +60,7 @@ function onUsersUpdate(url, poll) {
         url,
         {poll: poll},
         function(data) {
-            console.log(data);
-
-            $("#student-number").text('Students' + data.count);
+            $("#student-number").text('Students : ' + data.students.length);
 
             let tableBody = $("#table-students").find("tbody");
             tableBody.text('');
@@ -85,6 +83,10 @@ function onUsersUpdate(url, poll) {
         }
     );
 }
+
+$(".kick-button").click(function (e) {
+    console.log(e);
+});
 
 //Init
 function init() {

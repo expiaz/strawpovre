@@ -46,7 +46,8 @@ class Poll {
     getStudentsRepresentation () {
         let students = [];
         this.students.forEach(function (key, student) {
-            students.push(student);
+            if (student)
+                students.push(student);
         });
 
         return students;
