@@ -1,4 +1,4 @@
-const { getPollsOf } = require('./repository');
+const { getPollsOf, getPoll } = require('./repository');
 const { log } = require('../utils');
 
 const login = (req, res, next) => {
@@ -39,8 +39,19 @@ const dashboard = (req, res) => {
     });
 };
 
+const updateUsers = (req, res) => {
+    let data = req.body;
+    log(`controller updating connected students of the given poll`);
+    log(`request parameters : ${data.poll} (should be the id of the poll)`);
+    return res.json({
+        message: "Update connected students",
+        students: getPoll(data.poll).students,
+    });
+};
+
 module.exports = {
     login,
     poll,
-    dashboard
+    dashboard,
+    updateUsers,
 };

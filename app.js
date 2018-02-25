@@ -60,6 +60,9 @@ app.get('/dashboard', (req, res, next) => {
 // delete a poll
 // app.delete('/dashboard/poll/:id(\\d+)')
 
+//Update users (admin)
+app.post('/poll/:poll(\\w{5})/update-users', controller.updateUsers);
+
 app.post('/dashboard/poll', (req, res) => {
     log(req.body);
 });
