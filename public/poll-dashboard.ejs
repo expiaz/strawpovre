@@ -127,6 +127,7 @@
                 {message: 'A user just joined the poll'},
                 {type: 'info'}
             );
+            onUsersUpdate('/poll/<%= poll.id %>/update-users', '<%= poll.id %>');
         }
     });
 

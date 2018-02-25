@@ -84,10 +84,6 @@ function onUsersUpdate(url, poll) {
     );
 }
 
-$(".kick-button").click(function (e) {
-    console.log(e);
-});
-
 //Init
 function init() {
     let chartAnswers = displayChartOnNextQuestion(ctx);

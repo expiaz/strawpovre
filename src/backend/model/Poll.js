@@ -35,7 +35,7 @@ class Poll {
             // already co, was disconnected
             return true;
         }
-        if (! this.closed) {
+        if (! this.closed && email) {
             log(`New user for poll ${this.id} : ${email}`);
             this.students.set(email, new Map());
         }
