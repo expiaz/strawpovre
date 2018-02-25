@@ -60,12 +60,28 @@ function onUsersUpdate(url, poll) {
         url,
         {poll: poll},
         function(data) {
-            //Notify the message
-            $.notify(
-                {message: data.message},
-                {type: 'info'}
-            );
-            console.log(data.students);
+            console.log(data);
+
+            $("#student-number").text('Students' + data.count);
+
+            let tableBody = $("#table-students").find("tbody");
+            tableBody.text('');
+
+            if (data.students && typeof data.students[Symbol.iterator] === 'function') {
+                data.students.forEach(function (student) {
+                    if (student) {
+                        console.log(student);
+                        tableBody.append(
+                            "<tr>" +
+                                "<td>" + student + "</td>" +
+                                "<td>" +
+                                    '<button class="btn btn-block kick-button">Kick user</button>' +
+                                "</td>" +
+                            "</tr>"
+                        );
+                    }
+                })
+            }
         }
     );
 }
