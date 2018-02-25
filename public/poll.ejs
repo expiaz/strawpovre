@@ -5,6 +5,7 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link href="https://use.fontawesome.com/releases/v5.0.6/css/all.css" rel="stylesheet">
     <link rel="stylesheet" href="/assets/css/styles.css">
     <title>Poll</title>
 </head>
@@ -21,24 +22,19 @@
                         </div>
                     </div>
                 </div>
-
-                <div class="inner cover">
-                    <h1 class="cover-heading">Question 1</h1>
-                    <input type="text" placeholder="Answer" name="answer" class="form-control mb-3">
-                    <button class="btn btn-success">Send</button>
-                </div>
-
-                <div class="mastfoot">
-                    <div class="inner">
-                        <div class="badge badge-warning text-white p-2">Question 1 / XX</div>
-                    </div>
-                </div>
-
+                <div class="poll-container"></div>
             </div>
         </div>
     </div>
 
+    <script src="http://code.jquery.com/jquery-3.3.1.min.js"
+            integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+            crossorigin="anonymous"></script>
     <script src="/socket.io/socket.io.js"></script>
-    <script src="assets/js/poll.js"></script>
+    <script>
+        var socket = io('/<%= poll.id %>');
+    </script>
+    <script src="/assets/js/poll.js"></script>
+
 </body>
 </html>
