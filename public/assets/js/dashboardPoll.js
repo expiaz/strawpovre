@@ -28,7 +28,7 @@ $(document).ready(function () {
         let data = [];
 
         for (let i = 0; i < answers.length; i++) {
-            data.push(answers[i].number);
+            data[answers[i]] = data[answers[i]] + 1;
         }
 
         return chartAnswers = new Chart(ctx, {
@@ -37,7 +37,7 @@ $(document).ready(function () {
                 labels: ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
                 datasets: [{
                     label: 'Answers for the question n°' + questionNumber,
-                    data,
+                    data: data,
                     backgroundColor: backgroundColors,
                     borderColor: borderColors,
                     borderWidth: 1
@@ -55,38 +55,32 @@ $(document).ready(function () {
         });
     }
 
-    //Return the poll updated
-    function onUsersUpdate(url, poll) {
-        $.post(
-            url,
-            {poll: poll},
-            function (data) {
-                $("#student-number").text('Students : ' + data.students.length);
-
-                let tableBody = $("#table-students").find("tbody");
-                tableBody.text('');
-
-                if (data.students && typeof data.students[Symbol.iterator] === 'function') {
-                    data.students.forEach(function (student) {
-                        if (student) {
-                            console.log(student);
-                            tableBody.append(
-                                "<tr>" +
-                                "<td>" + student + "</td>" +
-                                "<td>" +
-                                '<button class="btn btn-block kick-button">Kick user</button>' +
-                                "</td>" +
-                                "</tr>"
-                            );
-                        }
-                    })
-                }
-            }
-        );
-    }
     $(".kick-button").click(function (e) {
         console.log(e);
     });
 
     let chartAnswers = displayChartOnNextQuestion(ctx);
 });
+
+//Handle the join event
+function joinHandler(data) {
+    $("#student-number").text('Students : ' + data.students.size);
+
+    let tableBody = $("#table-students").find("tbody");
+    tableBody.text('');
+
+    if (data.students && typeof poll.students[Symbol.iterator] === 'function') {
+        data.students.forEach(function (student) {
+            if (student) {
+                tableBody.append(
+                    "<tr>" +
+                        "<td>" + student + "</td>" +
+                        "<td>" +
+                            '<button class="btn btn-block kick-button">Kick user</button>' +
+                        "</td>" +
+                    "</tr>"
+                );
+            }
+        })
+    }
+}

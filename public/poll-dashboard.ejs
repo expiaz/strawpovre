@@ -83,10 +83,10 @@
                 </tr>
                 </thead>
                 <tbody>
-                    <% for (var {key, student} of poll.students) { %>
-                        <% if (student) { %>
+                    <% for (var student of poll.students) { %>
+                        <% if (student[0]) { %>
                         <tr>
-                            <td><%= student %></td>
+                            <td><%= student[0] %></td>
                             <td>
                                 <button class="btn btn-block kick-button">Kick user</button>
                             </td>
@@ -95,10 +95,8 @@
                     <% } %>
                 </tbody>
             </table>
-            <button class="btn btn-block" onclick="onUsersUpdate('/poll/<%= poll.id %>/update-users', '<%= poll.id %>')">Test Ajax</button>
-            <div class="container chart-container">
-                <canvas id="chart-answers" width="400" height="400"></canvas>
-            </div>
+
+            <button class="btn btn-block btn-lg">Start the poll</button>
         </main>
     </div>
 </div>
@@ -128,11 +126,11 @@
                 {message: 'A user just joined the poll'},
                 {type: 'info'}
             );
-            onUsersUpdate('/poll/<%= poll.id %>/update-users', '<%= poll.id %>');
+            joinHandler(packet);
         }
     });
 
-    socket.on('server:user:disconnect', packet => {
+    socket.on('server:user:disconnect', () => {
         $.notify(
             {message: 'A user just left the poll'},
             {type: 'info'}

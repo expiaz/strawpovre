@@ -35,14 +35,6 @@ const bindSocket = function (provider, poll) {
        server:question:next => send the next question
         */
 
-        socket.emit('server:poll:join', {
-            user : email,
-            length: poll.questions.length,
-            students: Array.from(poll.students.values()),
-            index: poll.index,
-            prof: poll.owner,
-        });
-
         if (admin) {
             if (poll.owner !== email) {
                 // admins can't access every poll
@@ -55,6 +47,14 @@ const bindSocket = function (provider, poll) {
             bindStudent(socket, user, poll, provider);
         }
 
+        socket.emit('server:poll:join', {
+            user: email,
+            length: poll.questions.length,
+            students: Array.from(poll.students.values()),
+            index: poll.index,
+            prof: poll.owner,
+        });
+
         // event bindings
         socket.on('disconnect', () => {
             log(`Poll ${poll.id}, ${email} disconnected`);
@@ -62,7 +62,7 @@ const bindSocket = function (provider, poll) {
     });
 };
 
-const bindAdmin = (socket, user, poll) => {
+const bindAdmin = (socket, user, poll, provider) => {
     const { email } = user;
 
     const handleNextQuestion = () => {
@@ -103,6 +103,10 @@ const bindStudent = (socket, user, poll, provider) => {
         socket.emit('server:poll:closed');
         socket.disconnect();
         return;
+    } else {
+        socket.on('server:poll:join', () => {
+            provider.emit('server:poll:join');
+        });
     }
 
     socket.on('client:student:answer', answer => {

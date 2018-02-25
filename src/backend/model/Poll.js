@@ -40,7 +40,7 @@ class Poll {
             this.students.set(email, new Map());
         }
 
-        return this.closed;
+        return !this.closed;
     }
 
     getStudentsRepresentation () {
