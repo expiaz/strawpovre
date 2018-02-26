@@ -67,7 +67,7 @@ const bindSocket = function (provider, poll) {
 const bindAdmin = (socket, user, poll, provider) => {
     const { email } = user;
 
-    const handleChangeQuestion = (index) => {
+    const handleChangeQuestion = index => {
         const question = poll.changeQuestion(index);
         if (! question) {
             // no more
@@ -84,21 +84,14 @@ const bindAdmin = (socket, user, poll, provider) => {
         poll.removeStudent(email) && acknoledgement();
     });
 
-    /**
-     * acknoledgement is used to send back the answer
-     * to the question to the admin without an other events
-     * it's simply a function parameter passed in front
-     * socket.io handles the transfer
-     */
-
-    socket.on('client:admin:poll:start', acknoledgement => {
+    socket.on('client:admin:poll:start', () => {
         log(`Starting the polll ${poll.id}`);
         poll.start();
         handleChangeQuestion(0);
     });
 
-    socket.on('client:admin:question:change', (acknoledgement, index) => {
-        handleChangeQuestion(acknoledgement, index);
+    socket.on('client:admin:question:change', index => {
+        handleChangeQuestion(index);
     });
 
     socket.on('client:admin:question:results', () => {

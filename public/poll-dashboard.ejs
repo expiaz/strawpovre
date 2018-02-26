@@ -100,6 +100,11 @@
             $(elem).prop("disabled", true);
         }
     }
+
+    function changeQuestion(index) {
+        console.log(state.index, index, state.index + index);
+        socket.emit('client:admin:question:change', state.index + index);
+    }
 </script>
 <script type="text/javascript" src="/assets/js/dashboardPoll.js"></script>
 
