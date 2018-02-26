@@ -1,7 +1,6 @@
 $('document').ready(function () {
 
     function handleDuplicate($template, $addButton) {
-        console.log($template);
         const $cleanTemplate = $template.clone(true);
         $addButton.click(function (e) {
             e.preventDefault();
