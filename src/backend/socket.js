@@ -1,6 +1,4 @@
-import {render} from "../utils";
-
-const { log } = require('../utils');
+const { log, render } = require('../utils');
 
 /**
  * bind a socket and it's namespace to the correct events according to it's permissions

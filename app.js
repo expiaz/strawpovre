@@ -7,10 +7,7 @@ const expressValidator = require('express-validator');
 // hydrate passport with strategies and serialization
 require('./src/backend/passport');
 
-const {
-    log,
-    render
-} = require('./src/utils');
+const { log } = require('./src/utils');
 
 const {
     expressSession,
@@ -24,12 +21,7 @@ const {
     getAllQuestions,
 } = require('./src/backend/repository');
 
-const {
-    front,
-    back,
-    modal,
-    api
-} = require('./src/backend/controller');
+const { initRoutes } = require('./src/backend/controller');
 
 const config = require('./src/config');
 
@@ -57,7 +49,14 @@ app.use(express.static(config.express.dist));
  * ROUTES
  */
 
-app.use('/poll/:poll(\\w{5})', front);
+const {
+    front,
+    back,
+    modal,
+    api
+} = initRoutes(io);
+
+app.use('/poll', front);
 app.use('/dashboard', back);
 app.use('/modal', modal);
 app.use('/api', api);

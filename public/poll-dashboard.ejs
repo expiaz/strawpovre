@@ -21,7 +21,7 @@
         <p id="question-number">Questions : <%= poll.questions.length %></p>
         <p id="student-number">Students : <%= poll.students.size %></p>
         <div id="table-students">
-            <%- inject('students-list', {students: poll.students}) %>
+            <%- include('student-list', {students: poll.students}) %>
         </div>
         <button class="btn btn-lg btn-block" id="start-poll-button">Start the poll and finish the register</button>
     </div>

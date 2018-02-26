@@ -78,7 +78,7 @@ $('button.delete-poll').click(function (e) {
     e.preventDefault();
     $.ajax({
         type: 'DELETE',
-        url: '/dashboard/poll',
+        url: '/api/poll',
         data: {
             id: $(e.target).attr('data-id')
         }

@@ -110,9 +110,9 @@ const adminAuth = (req, res, next) => {
 const isUser = (req, res, next) => {
     if (!req.user) {
         log(`controller login render login`);
-        return res.render('poll-login', {
+        return res.render('poll-login'/*, {
             error: 'You must be authenticated to access this page'
-        });
+        }*/);
     }
     return next();
 };
@@ -120,9 +120,9 @@ const isUser = (req, res, next) => {
 // make sure an admin route is accessible only by administrators
 const isAdmin = (req, res, next) => {
     if (!req.user || !req.user.admin) {
-        return res.render('dashboard-login', {
+        return res.render('dashboard-login'/*, {
             error: 'You must be admin to access this page'
-        });
+        }*/);
     }
     return next();
 };
