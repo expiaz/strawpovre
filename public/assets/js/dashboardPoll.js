@@ -45,7 +45,7 @@ function questionHandler(data) {
         '</div>'
     );
 
-    $(".page-header-content").prepend(
+    $("#displayAnswers").html(
         '<button class="btn btn-success" onclick="triggerCorrection()">Display answers</button>'
     );
 

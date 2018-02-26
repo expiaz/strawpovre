@@ -144,7 +144,7 @@ const initRoutes = io => {
             });
         }
         const { password, question } = req.body;
-        createPoll(io, password, req.user, question.map(async id => await getQuestion(id)));
+        createPoll(io, password, req.user, await Promise.all(question.map(id => getQuestion(id))));
         return res.json({
             success: true,
             template: render('poll-list', {
