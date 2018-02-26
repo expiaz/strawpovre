@@ -1,3 +1,18 @@
 html {
   height: 100%;
 }
+
+
+@keyframes fade {
+  from {opacity: 0}
+  to {opacity: 1}
+}
+
+.dark-theme {
+  color: #fff;
+  text-shadow: 0 0.05rem 0.1rem rgba(0,0,0,.5);
+  height: 100%;
+  background-color: #333;
+  padding: 0;
+
+}

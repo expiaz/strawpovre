@@ -41,4 +41,9 @@
       width: 42rem;
     }
   }
+
+
+  .poll-question, .poll-lobby {
+    animation: fade 1s;
+  }
 }
