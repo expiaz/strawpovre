@@ -1,14 +1,27 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link href="https://use.fontawesome.com/releases/v5.0.6/css/all.css" rel="stylesheet">
+    <link rel="stylesheet" href="/assets/css/styles.css">
+    <title>Poll creation</title>
+</head>
+<body>
 <form>
-    <label>
-        Mot de passe (4 caractères)
-        <input type="text" name="password" required min="4">
-    </label>
+    <div class="form-group">
+        <label for="">Mot de passe (4 caractères)</label>
+        <input type="text" class="form-control" name="password" required min="4">
+    </div>
+
     Questions
     <fieldset class="template">
         <select name="level" class="change">
             <option value="">Niveau</option>
             <% for(var i = 0; i < levels.length; i++) { %>
-                <option value="<%= levels[i].id %>"><%= levels[i].label %></option>
+            <option value="<%= levels[i].id %>"><%= levels[i].label %></option>
             <% } %>
         </select>
         <select name="subject" class="change">
@@ -20,7 +33,7 @@
         <select name="question[]" required>
             <option value="">Question</option>
             <% for(var i = 0; i < questions.length; i++) { %>
-                <option value="<%= questions[i].id %>"><%= questions[i].label %></option>
+            <option value="<%= questions[i].id %>"><%= questions[i].label %></option>
             <% } %>
         </select>
         <button style="display: none;" class="remove-template">Supprimer</button>
@@ -28,3 +41,5 @@
     <button class="add-template">Ajouter une question</button>
 </form>
 <div class="error"></div>
+</body>
+</html>

@@ -11569,6 +11569,40 @@ html
     height: 100%;
 }
 
+@-webkit-keyframes fade
+{
+    from
+    {
+        opacity: 0;
+    }
+    to
+    {
+        opacity: 1;
+    }
+}
+
+@keyframes fade
+{
+    from
+    {
+        opacity: 0;
+    }
+    to
+    {
+        opacity: 1;
+    }
+}
+
+.dark-theme
+{
+    height: 100%;
+    padding: 0; 
+
+    color: #fff;
+    background-color: #333;
+    text-shadow: 0 .05rem .1rem rgba(0, 0, 0, .5);
+}
+
 .poll
 {
     height: 100%;
@@ -11626,6 +11660,12 @@ html
     {
         width: 42rem;
     }
+}
+.poll .poll-question,
+.poll .poll-lobby
+{
+    -webkit-animation: fade 1s;
+            animation: fade 1s;
 }
 
 .masthead
@@ -11747,14 +11787,12 @@ html
 .dashboard .sidebar-sticky
 {
     position: -webkit-sticky;
-    position:         sticky;
-    top: 48px;
 
     overflow-x: hidden;
     overflow-y: auto;
-    /* Height of navbar */
 
     height: calc(100vh - 48px);
+    margin-top: 48px;
     padding-top: .5rem;
     /* Scrollable contents if viewport is shorter than content. */
 }
