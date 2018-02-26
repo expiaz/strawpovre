@@ -76,11 +76,17 @@
         answerHandler(object);
     });
 
-    $("#start-poll-button").click(function (e) {
-        socket.emit('client:admin:poll:start', answers => {
-            // TODO answers chart
-        });
+    socket.on('server:question:result', data => {
+        resultHandler(data);
     });
+
+    $("#start-poll-button").click(function (e) {
+        socket.emit('client:admin:poll:start');
+    });
+
+    function triggerCorrection() {
+        socket.emit('client:admin:question:results');
+    }
 
     function triggerBlacklist(elem) {
         if (!$(elem).prop("disabled")) {

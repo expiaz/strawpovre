@@ -67,7 +67,7 @@ const bindSocket = function (provider, poll) {
 const bindAdmin = (socket, user, poll, provider) => {
     const { email } = user;
 
-    const handleChangeQuestion = (ack, index) => {
+    const handleChangeQuestion = (index) => {
         const question = poll.changeQuestion(index);
         if (! question) {
             // no more
@@ -76,7 +76,6 @@ const bindAdmin = (socket, user, poll, provider) => {
         log(`Poll ${poll.id} next question requested : ${question.label}`);
         // send to everyone else in the room
         provider.emit('server:question:change', question);
-        ack(poll.questions[question.index].answers);
         return question;
     };
 
@@ -95,15 +94,15 @@ const bindAdmin = (socket, user, poll, provider) => {
     socket.on('client:admin:poll:start', acknoledgement => {
         log(`Starting the polll ${poll.id}`);
         poll.start();
-        handleChangeQuestion(acknoledgement, 0);
+        handleChangeQuestion(0);
     });
 
     socket.on('client:admin:question:change', (acknoledgement, index) => {
         handleChangeQuestion(acknoledgement, index);
     });
 
-    socket.on('client:admin:question:results', acknoledgement => {
-        acknoledgement(poll.changeQuestion(poll.index), poll.getAnswers());
+    socket.on('client:admin:question:results', () => {
+        provider.emit('server:question:result', poll.questions[poll.index]);
     });
 };
 

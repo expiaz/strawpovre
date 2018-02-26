@@ -31,14 +31,22 @@ function questionHandler(data) {
 
     Object.keys(data.answers).forEach(function (answer) {
         $("#header-question").append(
-            `<div style="display: inline; margin: 0px 20px;"><h5 class="d-inline">${data.answers[answer]}</h5></div>`
+            `<div style="display: inline; margin: 0px 20px;">` +
+                `<h5 class="d-inline question-answers" data-id="answer">${data.answers[answer]}</h5>`
+            +`</div>`
         );
     });
 
     content.append(
         '<div class="chart-container" style="margin-top: 50px;position: relative; height:40vh; width:80vw">' +
         '    <canvas id="chart-answers"></canvas>' +
-        '</div>');
+        '</div>'
+    );
+
+    $(".page-header-content").prepend(
+        '<button class="btn btn-success" onclick="triggerCorrection()">Display answers</button>'
+    );
+
     let ctx = document.getElementById('chart-answers');
     chartAnswers = initChart(ctx, data);
 }
@@ -52,6 +60,19 @@ function answerHandler(answers) {
             chartAnswers.update();
         }
     }
+}
+
+function resultHandler(question) {
+    let correctAnswers = question.answers.filter(function (elem) {
+        return elem.correct === 1;
+    }).map(function (elem) {
+        return elem.label;
+    });
+    Object.keys($(".question-answers")).forEach(function (id) {
+       let displayAnswer = $(".question-answers")[id];
+       if (correctAnswers.indexOf($(displayAnswer).text()) !== -1)
+           $(displayAnswer).addClass("text-success");
+    });
 }
 
 //Charts
