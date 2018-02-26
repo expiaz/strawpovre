@@ -24,7 +24,6 @@ $('document').ready(function () {
                 )
             );
 
-    const $buttonSubmitQuestion = $('button.submit-question');
     $('button.add-question').click(function (e) {
         e.preventDefault();
         $.ajax({
@@ -54,7 +53,7 @@ $('document').ready(function () {
                 })
                 return false;
             });
-            $buttonSubmitQuestion.click(function () {
+            $('button.submit-question').click(function () {
                 $form.submit();
             });
             $('.question-modal').modal('show');
@@ -65,7 +64,6 @@ $('document').ready(function () {
         return false;
     })
 
-    const $buttonSubmitPoll = $('button.submit-poll');
     $('button.add-poll').click(function (e) {
         e.preventDefault();
         $.ajax({
@@ -113,7 +111,7 @@ $('document').ready(function () {
                 })
                 return false;
             });
-            $buttonSubmitPoll.click(function () {
+            $('button.submit-poll').click(function () {
                 $form.submit();
             });
             $('.poll-modal').modal('show');

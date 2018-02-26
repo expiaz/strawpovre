@@ -102,7 +102,7 @@ const bindAdmin = (socket, user, poll, provider) => {
     });
 
     socket.on('client:admin:question:results', acknoledgement => {
-        acknoledgement(poll.getAnswers());
+        acknoledgement(poll.changeQuestion(poll.index), poll.getAnswers());
     });
 };
 
