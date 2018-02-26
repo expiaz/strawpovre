@@ -10,7 +10,8 @@
     <title>Question creation</title>
 </head>
 <body class="dark-theme">
-<div class="container">
+<div class="container col-9">
+    <h1 class="text-center">Question creation</h1>
     <form>
         <div class="form-group">
             <label>Niveau</label>
@@ -36,7 +37,7 @@
         <div class="form-group template">
             <div class="row px-3">
                 <input class="form-control col-10" name="answer[]" required>
-                <input type="hidden" name="correct[]" value="0" />
+                <input class="btn btn-danger" type="hidden" name="correct[]" value="0" />
                 <div class="form-check col-2">
                     <input type="checkbox" name="correct[]" onclick="this.checked ? this.previousElementSibling.setAttribute('disabled', true) : this.previousElementSibling.removeAttribute('disabled')" value="1">
                     Correcte
