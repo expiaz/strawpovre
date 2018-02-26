@@ -27,6 +27,10 @@ socket.on('server:student:remove', data => {
         location.replace("/logout");
 });
 
+socket.on('server:question:results', data => {
+    resultHandler(data);
+});
+
 
 function renderQuestion(question) {
     $('.poll-container').html(function () {
@@ -53,7 +57,7 @@ function renderAnswers(answers) {
 
 function renderAnswer(id, label) {
     return `<div class="col-4">
-                <div class="btn btn-info col-10" id="answer-${id}" 
+                <div class="btn btn-info col-10 answer-display" id="answer-${id}" 
                     onclick="answerClick($('.answers'), $(this), ${id})">
                     ${label}
                 </div>
@@ -96,6 +100,28 @@ function answerClick(btnGroup, btn, answer) {
 function send(btn) {
     $(btn).prop("disabled", true);
     socket.emit('client:student:answer', answerSelected);
+}
+
+function resultHandler(question) {
+    let correctAnswers = question.answers.filter(function (elem) {
+        return elem.correct === 1;
+    }).map(function (elem) {
+        return elem.label;
+    });
+
+    $(".poll-container").prepend(
+        '<div class="alert" id="alert-answer">' +
+            '<h3>La bonne réponse était :</h3>' +
+        '</div>'
+    );
+
+    correctAnswers.forEach(function (answer) {
+        $("#alert-answer").append(
+            `<div style="display: inline; margin: 0px 20px;">` +
+            `<h5 class="d-inline question-answers" data-id="answer">${answer}</h5>`
+            +`</div>`
+        );
+    });
 }
 
 /**
