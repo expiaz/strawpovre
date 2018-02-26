@@ -1,7 +1,6 @@
 $('document').ready(function () {
 
     function handleDuplicate($template, $addButton) {
-        console.log($template);
         const $cleanTemplate = $template.clone(true);
         $addButton.click(function (e) {
             e.preventDefault();
@@ -33,7 +32,7 @@ $('document').ready(function () {
             $('.question-modal .modal-body').html(template);
             handleDuplicate(
                 $('.question-modal .modal-body .template'),
-                $('.question-modal .modal-body button.add-template')
+                $('.question-modal .modal-body .add-template')
             );
             var $form = $('.question-modal .modal-content form');
             $form.submit(function () {
@@ -53,7 +52,7 @@ $('document').ready(function () {
                 })
                 return false;
             });
-            $('button.submit-question').click(function () {
+            $('.submit-question').click(function () {
                 $form.submit();
             });
             $('.question-modal').modal('show');
@@ -90,7 +89,7 @@ $('document').ready(function () {
             })
             handleDuplicate(
                 $('.poll-modal .modal-body .template'),
-                $('.poll-modal .modal-body button.add-template')
+                $('.poll-modal .modal-body .add-template')
             );
             var $form = $('.poll-modal .modal-content form');
             $form.submit(function () {
@@ -111,7 +110,7 @@ $('document').ready(function () {
                 })
                 return false;
             });
-            $('button.submit-poll').click(function () {
+            $('.submit-poll').click(function () {
                 $form.submit();
             });
             $('.poll-modal').modal('show');

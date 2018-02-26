@@ -1,56 +1,39 @@
-<!doctype html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link href="https://use.fontawesome.com/releases/v5.0.6/css/all.css" rel="stylesheet">
-    <link rel="stylesheet" href="/assets/css/styles.css">
-    <title>Question creation</title>
-</head>
-<body class="dark-theme">
-<div class="container col-9">
-    <h1 class="text-center">Question creation</h1>
-    <form>
-        <div class="form-group">
-            <label>Niveau</label>
-            <select class="form-control" name="level" required>
-                <% for(var i = 0; i < levels.length; i++) { %>
-                <option value="<%= levels[i].id %>"><%= levels[i].label %></option>
-                <% } %>
-            </select>
-        </div>
-        <div class="form-group">
-            <label>Matière</label>
-            <select class="form-control" name="subject" required>
-                <% for(var i = 0; i < subjects.length; i++) { %>
-                <option value="<%= subjects[i].id %>"><%= subjects[i].label %></option>
-                <% } %>
-            </select>
-        </div>
-        <div class="form-group">
-            <label>Intitulé</label>
-            <input class="form-control" name="label">
-        </div>
-        Réponses
-        <div class="form-group template">
-            <div class="row px-3">
-                <input class="form-control col-10" name="answer[]" required>
-                <div class="form-check col-2">
-                    <label>
-                        <input type="hidden" name="correct[]" value="0" />
-                        <input type="checkbox" name="correct[]" onclick="this.checked ? this.previousElementSibling.setAttribute('disabled', true) : this.previousElementSibling.removeAttribute('disabled')" value="1">
-                        Correcte
-                    </label>
-                </div>
-                <button style="display: none;" class="remove-template btn btn-danger">Supprimer</button>
+<form>
+    <div class="form-group">
+        <label>Niveau</label>
+        <select class="form-control" name="level" required>
+            <% for(var i = 0; i < levels.length; i++) { %>
+            <option value="<%= levels[i].id %>"><%= levels[i].label %></option>
+            <% } %>
+        </select>
+    </div>
+    <div class="form-group">
+        <label>Matière</label>
+        <select class="form-control" name="subject" required>
+            <% for(var i = 0; i < subjects.length; i++) { %>
+            <option value="<%= subjects[i].id %>"><%= subjects[i].label %></option>
+            <% } %>
+        </select>
+    </div>
+    <div class="form-group">
+        <label>Intitulé</label>
+        <input class="form-control" name="label">
+    </div>
+    Réponses
+    <div class="form-group template">
+        <div class="row px-3">
+            <input class="form-control col-10" name="answer[]" required>
+            <div class="form-check col-2">
+                <label>
+                    <input type="hidden" name="correct[]" value="0" />
+                    <input type="checkbox" name="correct[]" onclick="this.checked ? this.previousElementSibling.setAttribute('disabled', true) : this.previousElementSibling.removeAttribute('disabled')" value="1">
+                    Correcte
+                </label>
             </div>
+            <button style="display: none;" class="remove-template btn btn-danger">Supprimer</button>
         </div>
-        <button class="btn btn-success add-template">Ajouter une réponse</button>
+    </div>
+    <button class="btn btn-success add-template">Ajouter une réponse</button>
 
     </form>
     <div class="error"></div>
-</div>
-</body>
-</html>
