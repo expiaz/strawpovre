@@ -63,7 +63,9 @@
     });
 
     $("#start-poll-button").click(function (e) {
-        socket.emit('client:admin:poll:start');
+        socket.emit('client:admin:poll:start', answers => {
+            // TODO answers chart
+        });
     });
 
     function triggerBlacklist(elem) {

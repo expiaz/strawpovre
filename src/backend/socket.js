@@ -46,14 +46,6 @@ const bindSocket = function (provider, poll) {
             bindAdmin(socket, user, poll, provider);
         } else {
             // a student joined, add it to the list
-            // TODO send the list of users and not the new one
-            // bc if a user quit then reco, it'll be twice in the list
-            provider.emit('server:student:join', {
-                template: render('student-list', {
-                    students: poll.students
-                }),
-                count: poll.students.size,
-            });
             bindStudent(socket, user, poll, provider);
         }
 
@@ -83,13 +75,13 @@ const bindAdmin = (socket, user, poll, provider) => {
         log(`Poll ${poll.id} next question requested : ${question.label}`);
         // send to everyone else in the room
         provider.emit('server:question:next', question);
-        acknoledgement({answer: poll.questions[question.index].answer, ... question});
+        ack(poll.questions[question.index].answers);
         return question;
     };
 
     socket.on('client:admin:student:remove', (email, acknoledgement) => {
-        log(`A user (${packet.user}) has been removed from the poll ${poll.id}`);
-        poll.removeStudent(packet.user) && acknoledgement();
+        log(`A user (${email}) has been removed from the poll ${poll.id}`);
+        poll.removeStudent(email) && acknoledgement();
     });
 
     /**
@@ -123,6 +115,13 @@ const bindStudent = (socket, user, poll, provider) => {
         socket.disconnect();
         return;
     }
+
+    provider.emit('server:student:join', {
+        template: render('student-list', {
+            students: poll.students
+        }),
+        count: poll.students.size,
+    });
 
     /**
      * a student submitted his answer to the current question
