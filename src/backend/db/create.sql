@@ -81,10 +81,23 @@ VALUES ('root@root.root', '63a9f0ea7bb98050796b649e85481845', 'root', 'admin');
 INSERT INTO student (email, name, firstname) VALUES ('st1@st1.st1', 'John', 'Doe');
 INSERT INTO student (email, name, firstname) VALUES ('st2@st2.st2', 'Doe', 'John');
 
-INSERT INTO subject VALUES (NULL, 'Français');
+INSERT INTO subject VALUES (NULL, 'INFO1');
+INSERT INTO subject VALUES (NULL, 'INFO2');
+INSERT INTO subject VALUES (NULL, 'INFO3');
+INSERT INTO subject VALUES (NULL, 'INFO4');
+INSERT INTO subject VALUES (NULL, 'INFO5');
+INSERT INTO level VALUES (NULL, 'L1');
 INSERT INTO level VALUES (NULL, 'L2');
+INSERT INTO level VALUES (NULL, 'L3');
+INSERT INTO level VALUES (NULL, 'LP');
+INSERT INTO level VALUES (NULL, 'M1');
 
-INSERT INTO question VALUES (NULL, 'What is blue ?', 1, 1);
-INSERT INTO answer VALUES (NULL, 'blue', 1, TRUE);
-INSERT INTO answer VALUES (NULL, 'red', 1, FALSE);
-INSERT INTO answer VALUES (NULL, 'green', 1, FALSE);
+INSERT INTO question VALUES (NULL, 'What is JWT ?', 2, 3);
+INSERT INTO answer VALUES (NULL, 'JSON Web token', 1, TRUE);
+INSERT INTO answer VALUES (NULL, 'Javascript waiting tick', 1, FALSE);
+INSERT INTO answer VALUES (NULL, 'Just whip thomas', 1, FALSE);
+
+INSERT INTO question VALUES (NULL, 'What is love ?', 1, 4);
+INSERT INTO answer VALUES (NULL, 'Baby don t hurt me', 1, TRUE);
+INSERT INTO answer VALUES (NULL, 'Baby don t hurt me, no more', 1, TRUE);
+INSERT INTO answer VALUES (NULL, 'Rick rolled', 1, FALSE);
