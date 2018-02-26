@@ -98,6 +98,6 @@ INSERT INTO answer VALUES (NULL, 'Javascript waiting tick', 1, FALSE);
 INSERT INTO answer VALUES (NULL, 'Just whip thomas', 1, FALSE);
 
 INSERT INTO question VALUES (NULL, 'What is love ?', 1, 4);
-INSERT INTO answer VALUES (NULL, 'Baby don t hurt me', 1, TRUE);
-INSERT INTO answer VALUES (NULL, 'Baby don t hurt me, no more', 1, TRUE);
-INSERT INTO answer VALUES (NULL, 'Rick rolled', 1, FALSE);
+INSERT INTO answer VALUES (NULL, 'Baby don t hurt me', 2, TRUE);
+INSERT INTO answer VALUES (NULL, 'Baby don t hurt me, no more', 2, TRUE);
+INSERT INTO answer VALUES (NULL, 'Rick rolled', 2, FALSE);
