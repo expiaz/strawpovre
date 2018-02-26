@@ -36,13 +36,10 @@ class Question {
     }
 
     getAnswersForClient() {
-        let answers = [];
+        let answers = {};
 
         this.answers.forEach(function (answer) {
-            answers.push({
-                id: answer.id,
-                label: answer.label
-            });
+            answers[answer.id] = answer.label;
         });
 
         return answers;

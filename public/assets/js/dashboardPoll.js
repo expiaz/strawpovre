@@ -24,28 +24,32 @@ function questionHandler(data) {
     );
     let content = $("#content");
 
-    content.html("<h3>" + data.label + "</h3>");
-    content.append('<canvas id="chart-answers" width="400" height="400"></canvas>');
+    content.html(
+        "<div class='text-center' id='header-question'>" +
+            "<h3>" + data.label + "</h3>" +
+        "</div>");
+
+    Object.keys(data.answers).forEach(function (answer) {
+        $("#header-question").append(
+            `<div><p>${answers[answer]}</p></div>`
+        );
+    });
+
+    content.append(
+        '<div class="chart-container" style="margin-top: 50px;position: relative; height:40vh; width:80vw">' +
+        '    <canvas id="chart-answers"></canvas>' +
+        '</div>');
     let ctx = document.getElementById('chart-answers');
     chartAnswers = initChart(ctx, data);
 }
 
-function answerHandler(data) {
-    if (!data instanceof Array) {
-        let answer = data.answer;
-        $.notify(
-            {message: 'An answer has been subscribed : ' + answer.label},
-            {type: 'success'}
-        );
-        chartAnswers.data.datasets[0].data[chartAnswers.data.labels.indexOf(answer.label)]++;
-        chartAnswers.update();
-    } else {
-        if (data && data.length) {
-            console.log(data);
-            data.forEach(function (answer) {
-                chartAnswers.data.datasets[0].data[chartAnswers.data.labels.indexOf(answer.label)]++;
-                chartAnswers.update();
-            });
+function answerHandler(answers) {
+    if (answers) {
+        console.log(answers);
+        console.log(chartAnswers.data);
+        for (var email in answers) {
+            chartAnswers.data.datasets[0].data[chartAnswers.data.labels.indexOf(state.question.answers[answers[email]])]++;
+            chartAnswers.update();
         }
     }
 }
@@ -56,8 +60,8 @@ function initChart(ctx, question) {
         return;
     let answers = question.answers;
 
-    let data = Array(answers.length).fill(0);
-    let labels = answers.map(object => object.label);
+    let data = Array(Object.keys(answers).length).fill(0);
+    let labels = Object.keys(answers).map(id => answers[id]);
 
     return chartAnswers = new Chart(ctx, {
         type: "horizontalBar",

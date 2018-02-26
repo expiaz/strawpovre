@@ -59,6 +59,7 @@ const bindSocket = function (provider, poll) {
             students: Array.from(poll.students.values()),
             index: poll.index,
             prof: poll.owner,
+            question: poll.closed ? poll.changeQuestion(poll.index) : -1,
         });
     });
 };
@@ -74,7 +75,7 @@ const bindAdmin = (socket, user, poll, provider) => {
         }
         log(`Poll ${poll.id} next question requested : ${question.label}`);
         // send to everyone else in the room
-        provider.emit('server:question:next', question);
+        provider.emit('server:question:change', question);
         ack(poll.questions[question.index].answers);
         return question;
     };
@@ -126,13 +127,12 @@ const bindStudent = (socket, user, poll, provider) => {
     /**
      * a student submitted his answer to the current question
      */
-    socket.on('client:student:answer', answer => {
+    socket.on('client:student:answer', id => {
         // ensure that he don't already answered
-        if (poll.addAnswer({ email }, answer.label)) {
+        if (poll.addAnswer({ email }, id)) {
             // not already answered
             provider.emit('server:student:answer', {
-                user,
-                answer,
+                [email]: id,
             });
         }
 

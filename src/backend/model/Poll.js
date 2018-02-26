@@ -98,7 +98,7 @@ class Poll {
 
     getAnswers() {
         const studentAnswers = {};
-        this.students.forEach((student, answers) => {
+        this.students.forEach((answers, student) => {
             if (answers.has(this.index)) {
                 studentAnswers[student] = answers.get(this.index);
             }

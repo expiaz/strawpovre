@@ -3,11 +3,17 @@ let answerSelected = '';
 let state = {};
 
 socket.on('server:poll:join', packet => {
-    state = packet;
-    this.renderLobby();
+    if (packet)
+        state = packet;
+    if (state && state.question === -1)
+        this.renderLobby();
+    else {
+        currentQuestion = state.question;
+        this.renderQuestion(state.question);
+    }
 });
 
-socket.on('server:question:next', question => {
+socket.on('server:question:change', question => {
     currentQuestion = question;
     this.renderQuestion(question);
 });
@@ -15,6 +21,7 @@ socket.on('server:question:next', question => {
 socket.on('server:poll:quit', packet => {
     this.renderQuit();
 });
+
 socket.on('server:student:remove', data => {
     if (state && state.user === data.user)
         location.replace("/logout");
@@ -40,19 +47,15 @@ function renderQuestion(question) {
 }
 
 function renderAnswers(answers) {
-    let res = '';
-    for (let i = 0; i < answers.length; i++) {
-        res += renderAnswer(answers[i]);
-    }
-    return res;
+    return Object.keys(answers).map(id => renderAnswer(id, answers[id])).join('');
 }
 
 
-function renderAnswer(answer) {
+function renderAnswer(id, label) {
     return `<div class="col-4">
-                <div class="btn btn-info col-10" id="answer-${answer.id}" 
-                    onclick="answerClick($('.answers'), $(this), ${answer.id})">
-                    ${answer.label}
+                <div class="btn btn-info col-10" id="answer-${id}" 
+                    onclick="answerClick($('.answers'), $(this), ${id})">
+                    ${label}
                 </div>
             </div>`;
 }
@@ -81,7 +84,7 @@ function renderQuit() {
 }
 
 function answerClick(btnGroup, btn, answer) {
-    answerSelected = currentQuestion.answers[answer-1];
+    answerSelected = answer;
     for (let i = 0; i < btnGroup[0].children.length; i++) {
         $(btnGroup[0].children[i].children[0]).removeClass('btn-warning');
         $(btnGroup[0].children[i].children[0]).addClass('btn-info');
@@ -91,6 +94,7 @@ function answerClick(btnGroup, btn, answer) {
 }
 
 function send() {
+    $(this).prop("disabled", true);
     socket.emit('client:student:answer', answerSelected);
 }
 

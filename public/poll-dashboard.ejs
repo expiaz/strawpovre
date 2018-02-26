@@ -34,7 +34,7 @@
     socket.on('server:poll:join', data => {
         if (data)
             state = data;
-        if (state.index !== 0) {
+        if (state && state.question !== -1) {
             socket.emit('client:admin:question:results', (question, answers) => {
                 questionHandler(question);
                 answerHandler(answers);
@@ -66,8 +66,10 @@
         );
     });
 
-    socket.on('server:question:next', question => {
-        questionHandler(question);
+    socket.on('server:question:change', data => {
+        state.question = data;
+        state.index = data.index;
+        questionHandler(state.question);
     });
 
     socket.on('server:student:answer', object => {
