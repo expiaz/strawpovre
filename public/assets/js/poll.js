@@ -1,13 +1,20 @@
 let currentQuestion = '';
 let answerSelected = '';
+let state = {};
 
 socket.on('server:poll:join', packet => {
+    state = packet;
     this.renderLobby();
 });
 
 socket.on('server:question:next', question => {
     currentQuestion = question;
     this.renderQuestion(question);
+});
+
+socket.on('server:student:remove', data => {
+    if (state && state.user === data.user)
+        location.replace("/logout");
 });
 
 

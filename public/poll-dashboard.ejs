@@ -12,7 +12,7 @@
             <div style="position:absolute;width:200%;height:200%;left:0; top:0"></div>
         </div>
     </div>
-    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom page-header-content">
         <h1 class="h2">Poll n°<%= poll.id %></h1>
         <button class="btn btn-primary delete-poll" data-id="<%= poll.id %>">Delete</button>
     </div>
@@ -36,6 +36,7 @@
             {message: 'a user just joined the poll'},
             {type: 'info'}
         );
+
         $("#student-number").text('Students : ' + data.count);
         $("#table-students").html(data.template);
     });
