@@ -31,14 +31,23 @@ function questionHandler(data) {
 }
 
 function answerHandler(data) {
-    let answer = data.answer.answer;
-    $.notify(
-        {message: 'An answer has been subscribed : ' + answer.label},
-        {type: 'success'}
-    );
-
-    chartAnswers.data.datasets[0].data[chartAnswers.data.labels.indexOf(answer.label)]++;
-    chartAnswers.update();
+    if (!data instanceof Array) {
+        let answer = data.answer;
+        $.notify(
+            {message: 'An answer has been subscribed : ' + answer.label},
+            {type: 'success'}
+        );
+        chartAnswers.data.datasets[0].data[chartAnswers.data.labels.indexOf(answer.label)]++;
+        chartAnswers.update();
+    } else {
+        if (data && data.length) {
+            console.log(data);
+            data.forEach(function (answer) {
+                chartAnswers.data.datasets[0].data[chartAnswers.data.labels.indexOf(answer.label)]++;
+                chartAnswers.update();
+            });
+        }
+    }
 }
 
 //Charts
@@ -51,7 +60,7 @@ function initChart(ctx, question) {
     let labels = answers.map(object => object.label);
 
     return chartAnswers = new Chart(ctx, {
-        type: "bar",
+        type: "horizontalBar",
         data: {
             labels: labels,
             datasets: [{
@@ -66,8 +75,8 @@ function initChart(ctx, question) {
             scales: {
                 yAxes: [{
                     ticks: {
-                        beginAtZero: true
-                    }
+                        beginAtZero: true,
+                    },
                 }]
             }
         }

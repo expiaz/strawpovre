@@ -27,9 +27,20 @@
     </div>
 </main>
 <script src="/socket.io/socket.io.js"></script>
-<script type="text/javascript" src="/assets/js/dashboardPoll.js"></script>
 <script type="text/javascript">
     const socket = io('/<%= poll.id %>');
+    let state = {};
+
+    socket.on('server:poll:join', data => {
+        if (data)
+            state = data;
+        if (state.index !== 0) {
+            socket.emit('client:admin:question:results', (question, answers) => {
+                questionHandler(question);
+                answerHandler(answers);
+            });
+        }
+    })
 
     socket.on('server:student:join', data => {
         $.notify(
@@ -82,5 +93,6 @@
         }
     }
 </script>
+<script type="text/javascript" src="/assets/js/dashboardPoll.js"></script>
 
 <%- include('footer'); %>
