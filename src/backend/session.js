@@ -8,12 +8,19 @@ const { promisify } = require('../utils');
 const { connection, query } = require('./database');
 const { key, secret, store } = require('../config').session;
 
+// we'll use MySQL a store for the sessions
+// we can have used MemoryStore provided by express but we already have our memory leaks, useless to add more
+// (redis is better but some team members use windows, we won't change everything for a project this little)
 const sessionStore = new MysqlStore({ store }, connection);
 
+/**
+ * easier to user promises than callbacks
+ */
 const getSession = promisify(sessionStore.get, sessionStore);
 const setSession = promisify(sessionStore.set, sessionStore);
 const deleteSession = promisify(sessionStore.destroy, sessionStore);
 
+// initialize express (passport) sessions
 const expressSession = session({
     key,
     secret,
@@ -22,6 +29,7 @@ const expressSession = session({
     saveUninitialized: false
 });
 
+// share it with socket.io via the same store
 const socketioSession = passportSocketIo.authorize({
     cookieParser,
     key,
@@ -39,6 +47,10 @@ const socketioSession = passportSocketIo.authorize({
 });
 
 /**
+ * delete every sessions linked to a poll
+ * normally a session self-destruct when you quit, but a student may
+ * just leave the page and will never come back to this poll
+ * so sessions will stay forever, better delete them
  * @param poll {String}
  * @return {Promise}
  */

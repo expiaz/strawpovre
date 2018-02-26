@@ -1,5 +1,3 @@
-const md5 = require("md5");
-
 class Student {
     constructor(email, name, firstname, poll = '') {
         this.email = email;

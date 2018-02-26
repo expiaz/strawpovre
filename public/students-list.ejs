@@ -1,0 +1,20 @@
+<table class="table">
+    <thead>
+    <tr>
+        <th>Name</th>
+        <th>Action</th>
+    </tr>
+    </thead>
+    <tbody>
+    <% for (var student of students) { %>
+    <% if (student) { %>
+    <tr>
+        <td class="email-student-poll"><%= student[0] %></td>
+        <td>
+            <button class="btn btn-block kick-button" onclick="triggerBlacklist(this);">Kick user</button>
+        </td>
+    </tr>
+    <% } %>
+    <% } %>
+    </tbody>
+</table>

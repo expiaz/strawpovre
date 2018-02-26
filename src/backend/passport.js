@@ -6,6 +6,9 @@ const CustomStrategy = require('passport-custom').Strategy;
 const { getStudent, getProf, getPoll } = require('./repository');
 const { log } = require('../utils');
 
+/**
+ * authentication with username / password for administration
+ */
 passport.use(
     new LocalStrategy({
             usernameField: 'email'
@@ -22,6 +25,9 @@ passport.use(
         })
 );
 
+/**
+ * authentication with email / poll for poll
+ */
 passport.use('poll', new CustomStrategy((req, done) => {
     const { email = '', password = '' } = req.body;
     const { poll = '' } = req.params;
@@ -49,6 +55,9 @@ passport.use('poll', new CustomStrategy((req, done) => {
         });
 }));
 
+/**
+ * serialization between requests (@see mysql strawpovre.sessions)
+ */
 passport.serializeUser(function (user, done) {
     const { admin, email, poll = '' } = user;
     done(null, { admin, email, poll });

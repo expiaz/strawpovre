@@ -17,22 +17,6 @@ const borderColors = [
 
 let chartAnswers;
 
-//Handlers the join event
-function joinHandler(data) {
-    $("#student-number").text('Students : ' + data.count);
-    let tableBody = $("#table-students").find("tbody");
-    tableBody.text('');
-
-    tableBody.append(
-        "<tr>" +
-            "<td class='email-student-poll'>" + data.user + "</td>" +
-            "<td>" +
-                '<button class="btn btn-block kick-button" onclick="triggerBlacklist(this);">Kick user</button>' +
-            "</td>" +
-        "</tr>"
-    );
-}
-
 function questionHandler(data) {
     $.notify(
         {message: 'Let\'s go with ' + data.label},
@@ -42,7 +26,6 @@ function questionHandler(data) {
 
     content.html("<h3>" + data.label + "</h3>");
     content.append('<canvas id="chart-answers" width="400" height="400"></canvas>');
-
     let ctx = document.getElementById('chart-answers');
     chartAnswers = initChart(ctx, data);
 }

@@ -25,6 +25,7 @@ class Poll {
     destroy() {
         delete this.students;
         delete this.questions;
+        delete this.blacklist;
     }
 
     start() {
@@ -56,21 +57,36 @@ class Poll {
         return !this.closed;
     }
 
+    /**
+     *
+     * @param email
+     * @param answer
+     * @return {boolean} answer registered or not
+     */
     addAnswer({ email }, answer) {
         if (!this.students.has(email)
             || this.students.get(email).has(this.index)) {
-            return;
+            return false;
         }
         this.students.get(email).set(this.index, answer);
+        return true;
     }
 
-    nextQuestion() {
+    changeQuestion(index = this.index + 1) {
         if (this.index >= this.questions.length) {
             this.index = this.questions.length - 1;
             return;
         }
 
-        const question = this.questions[this.index++];
+        if (index > this.questions.length)  {
+          index = this.questions.length - 1;
+        } else if (index < 0) {
+          index = 0;
+        }
+
+        this.index = index;
+
+        const question = this.questions[this.index];
         return {
             label: question.label,
             answers: question.getAnswersForClient(),
@@ -78,19 +94,6 @@ class Poll {
             count: this.questions.length,
             index: this.index
         };
-    }
-
-    /**
-     *
-     * @param question Question
-     * @returns {boolean}
-     */
-    addQuestion(question) {
-        if (this.questions.indexOf(question) !== -1)
-            return false;
-
-        this.questions.push(question);
-        return true;
     }
 
     getAnswers() {

@@ -40,7 +40,7 @@ $('document').ready(function () {
                 e.preventDefault();
                 $.ajax({
                     type: 'POST',
-                    url: '/dashboard/question',
+                    url: '/api/question',
                     data: $form.serialize()
                 }).done(function (res) {
                     if (res.success) {
@@ -98,7 +98,7 @@ $('document').ready(function () {
                 e.preventDefault();
                 $.ajax({
                     type: 'POST',
-                    url: '/dashboard/poll',
+                    url: '/api/poll',
                     data: $form.serialize()
                 }).done(function (res) {
                     if (res.success) {

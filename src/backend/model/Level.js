@@ -1,5 +1,3 @@
-const { log } = require('../../utils');
-
 class Level {
 
     /**

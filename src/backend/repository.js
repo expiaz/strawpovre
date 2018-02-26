@@ -1,6 +1,9 @@
 const md5 = require('md5');
 const uid = require('uid');
 
+/**
+ * models
+ */
 const Student = require('./model/Student');
 const Prof = require('./model/Prof');
 const Poll = require('./model/Poll');
@@ -16,14 +19,15 @@ const deletePollSession = require('./session').deletePoll;
 const polls = new Map();
 
 /**
- *
+ * create a new poll and register it's namespace
  * @param io
  * @param password
  * @param owner
  * @param questions
  * @return {Poll}
  */
-const createPoll = (io, password, owner = new Prof('root@root.root', 'root', 'root', []), questions = []) => {
+const createPoll = (io, password,
+  owner = new Prof('root@root.root', 'root', 'root', []), questions = []) => {
     const id = uid(5);
     const ns = io.of(`/${id}`);
     const poll = new Poll(id, owner, questions, password, ns);
@@ -33,7 +37,7 @@ const createPoll = (io, password, owner = new Prof('root@root.root', 'root', 'ro
 };
 
 /**
- *
+ * destroy a poll, the linked sessions and release the memory
  * @param io
  * @param poll {Poll}
  * @return {Promise}
@@ -41,6 +45,7 @@ const createPoll = (io, password, owner = new Prof('root@root.root', 'root', 'ro
 const destroyPoll = (io, { id }) => getPoll(id)
     .then(poll => deletePollSession(id).then(() => {
         const { ns } = poll;
+        ns.emit('server:poll:destroy');
         // delete namespace
         Object.keys(ns.connected).forEach(socketId => {
             ns.connected[socketId].disconnect();
@@ -53,9 +58,9 @@ const destroyPoll = (io, { id }) => getPoll(id)
     }));
 
 /**
- *
+ * fetch a poll
  * @param id
- * @return {Promise}
+ * @return {Promise<Poll>}
  */
 const getPoll = id => new Promise((resolve, reject) => {
         if (polls.has(id)) {
@@ -68,7 +73,7 @@ const getPoll = id => new Promise((resolve, reject) => {
 /**
  *
  * @param prof {Prof}
- * @return {Promise}
+ * @return {Promise<Poll[]>}
  */
 const getPollsOf = ({ email }) =>
     Array.from(polls.values()).filter(poll => poll.owner === email);
@@ -76,12 +81,12 @@ const getPollsOf = ({ email }) =>
 /**
  *
  * @param where {Object}
- * @return {Promise}
+ * @return {Promise<Student>}
  */
 const getStudent = (where = {1:1}) => buildQuery('student', '*', where)
     .then(results => {
         if(!results.length) {
-            return Promise.reject(new Error('Student with given credentials not found'));
+            throw new Error('Student with given credentials not found');
         }
         const { email, firstname, name } = results[0];
         return new Student(email, name, firstname);
@@ -90,17 +95,24 @@ const getStudent = (where = {1:1}) => buildQuery('student', '*', where)
 /**
  *
  * @param where {Object}
- * @return {Promise}
+ * @return {Promise<Prof>}
  */
 const getProf = (where = {1:1}) => buildQuery('prof', '*', where)
     .then(results => {
         if(!results.length) {
-            return Promise.reject(new Error('Prof with given credentials not found'));
+            throw new Error('Prof with given credentials not found');
         }
         const { email, firstname, name } = results[0];
         return new Prof(email, name, firstname, getPollsOf({ email }));
     });
 
+/**
+ * create a new question and it's answers in the database
+ * @param label {String} the label of the question
+ * @param level {Number} the id of level wanted
+ * @param subject {Number} the id of subject wanted
+ * @param answers {Array<{label: {String}, correct: {Boolean}>} the answers
+ */
 const createQuestion = (label, level, subject, answers = []) => {
     query('INSERT INTO `question` SET ?', {
         label,
@@ -123,14 +135,16 @@ const createQuestion = (label, level, subject, answers = []) => {
 };
 
 /**
- *
+ * fetch a level
  * @param id {Number}
  * @return {Promise<Level>}
  */
 const getLevel = id =>
     query('SELECT * FROM `level` WHERE `level`.`id` = ?', [id])
         .then(results => {
-            if (!results.length) Promise.reject(`Level with id ${id} not found`);
+            if (!results.length) {
+              throw new Error(`Level with id ${id} not found`);
+            }
             const { label } = results[0];
             return new Level(id, label);
         });
@@ -151,7 +165,9 @@ const getAllLevels = () =>
 const getSubject = id =>
     query('SELECT * FROM `subject` WHERE `subject`.`id` = ?', [id])
         .then(results => {
-            if (!results.length) Promise.reject(`Subject with id ${id} not found`);
+            if (!results.length) {
+              throw new Error(`Subject with id ${id} not found`);
+            }
             const { label } = results[0];
             return new Subject(id, label);
         });
@@ -183,7 +199,9 @@ const getAnswer = (where = {1:1}) => buildQuery('answer', '*', where)
 const getQuestion = id =>
     query('SELECT * FROM `question` WHERE `question`.`id` = ?', [id])
         .then(async results => {
-            if (!results.length) Promise.reject(`Question with id ${id} not found`);
+            if (!results.length) {
+              throw new Error(`Question with id ${id} not found`);
+            }
             const { label, subject, level } = results[0];
             return new Question(
                 id,

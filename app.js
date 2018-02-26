@@ -1,43 +1,49 @@
 const express = require('express');
 const helmet = require('helmet');
 const socketio = require('socket.io');
-const path = require('path');
 const passport = require('passport');
 const expressValidator = require('express-validator');
-const fs = require('fs');
 
+// hydrate passport with strategies and serialization
 require('./src/backend/passport');
 
-const {expressSession, socketioSession} = require('./src/backend/session');
 const {
-    pollExists,
-    pollAuth,
-    adminAuth,
-    formSchemaLogin,
-    formSchemaQuestion,
-    formSchemaPoll,
-    validateFormSchema
-} = require('./src/backend/middleware');
+    log,
+    render
+} = require('./src/utils');
+
+const {
+    expressSession,
+    socketioSession
+} = require('./src/backend/session');
+
+const { isUser } = require('./src/backend/middleware');
+
 const {
     createPoll,
-    destroyPoll,
     getAllQuestions,
-    getQuestion,
-    getAllSubjects,
-    getAllLevels,
-    createQuestion,
-    getPollsOf,
-    getPoll
 } = require('./src/backend/repository');
-const {log, render} = require('./src/utils');
-const controller = require('./src/backend/controller');
+
+const {
+    front,
+    back,
+    modal,
+    api
+} = require('./src/backend/controller');
+
 const config = require('./src/config');
+
+// TODO remove it after tests
 const Prof = require('./src/backend/model/Prof');
 
 const app = express(), io = socketio.listen(app.listen(8000));
 
 app.set('views', config.express.view.directory);
 app.set('view engine', config.express.view.engine);
+
+/**
+ * MIDDLEWARES
+ */
 
 app.use(helmet());
 app.use(express.urlencoded({extended: true}));
@@ -47,139 +53,29 @@ app.use(passport.session());
 app.use(expressValidator());
 app.use(express.static(config.express.dist));
 
-app.post('/poll/:poll(\\w{5})',
-    pollExists,
-    formSchemaLogin,
-    validateFormSchema((req, res, next, err) => res.render('poll-login', {
-        error: err[0]
-    })),
-    pollAuth, (req, res) => {
-        const {poll = ''} = req.params;
-        log(`post ${poll} auth ok redirect`);
-        return res.redirect(`/poll/${poll}`);
-    });
+/**
+ * ROUTES
+ */
 
-app.get('/poll/:poll(\\w{5})', pollExists, controller.login, controller.poll);
-
-app.post('/dashboard',
-    formSchemaLogin,
-    validateFormSchema((req, res, next, err) => res.render('dashboard-login', {
-        error: err[0]
-    })),
-    passport.authenticate('local', {
-        failureRedirect: '/dashboard',
-        successRedirect: '/dashboard'
-    }));
-
-app.get('/dashboard', adminAuth, controller.dashboard);
-
-// add a poll
-// app.post('/dashboard/poll', formSchemaPoll, (req, res, next) => {
-//
-// }, (req, res) => res.redirect('/dashboard'));
-// delete a poll
-// app.delete('/dashboard/poll/:id(\\d+)')
-
-app.get('/modal/question', adminAuth, async (req, res) =>
-    res.render('forms/question', {
-        subjects: await getAllSubjects(),
-        levels: await getAllLevels()
-    }))
-
-app.get('/modal/poll', adminAuth, async (req, res) => {
-    return res.json({
-        template: render('forms/poll', {
-            subjects: await getAllSubjects(),
-            levels: await getAllLevels(),
-            questions: await getAllQuestions()
-        }),
-        data: await getAllQuestions().then(questions => questions.map(q => ({
-            id: q.id,
-            label: q.label,
-            subject: q.subject.id,
-            level: q.level.id
-        })))
-    })
-});
-
-app.post('/dashboard/question', adminAuth, formSchemaQuestion, validateFormSchema((req, res, next, err) => res.json({
-    success: false,
-    error: err
-})), async (req, res) => {
-    if (!req.body.correct.find(v => Boolean(v | 0))) {
-        return res.json({
-            success: false,
-            error: ['Au moins une réponse juste requise']
-        });
-    }
-    const { level, subject, label, answer, correct } = req.body;
-    await createQuestion(
-        label,
-        subject,
-        level,
-        answer.map((label, i) => ({
-            label,
-            correct: !!correct[i]
-        }))
-    );
-    return res.json({
-        success: true,
-    });
-});
-
-app.post('/dashboard/poll', adminAuth, formSchemaPoll, validateFormSchema((req, res, next, err) => res.json({
-    success: false,
-    error: err
-})), async (req, res) => {
-    if (!req.body.question.find(v => Boolean(v | 0))) {
-        return res.json({
-            success: false,
-            error: ['Au moins une question doit être remplie']
-        });
-    }
-    const { password, question } = req.body;
-    const poll = createPoll(io, password, req.user, question.map(async id => await getQuestion(id)));
-    return res.json({
-        success: true,
-        template: render('poll-list', {
-            polls: await getPollsOf(req.user)
-        })
-    });
-});
-
-app.delete('/dashboard/poll', adminAuth, (req, res) => {
-    const { id = '' } = req.body;
-    if (!id || id.length !== 5) {
-        return res.json({
-            success: false,
-            error: ['A poll must have an id']
-        });
-    }
-    destroyPoll(io, { id })
-        .then(() => {
-            res.json({
-                success: true
-            })
-        })
-        .catch(e => {
-            res.json({
-                success: false,
-                error: [e.message]
-            })
-        })
-})
-
-app.get('/logout', (req, res) => {
+app.use('/poll/:poll(\\w{5})', front);
+app.use('/dashboard', back);
+app.use('/modal', modal);
+app.use('/api', api);
+app.get('/logout', isUser, (req, res) => {
     if (req.user) {
         req.logout();
     }
     return res.redirect('/dashboard');
 });
-
 app.get('*', (req, res) => res.redirect('/dashboard'));
+
+/**
+ * SOCKET.IO
+ */
 
 io.use(socketioSession);
 
+// test
 (async () => {
     const poll = createPoll(
         io,

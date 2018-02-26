@@ -20,26 +20,9 @@
 
         <p id="question-number">Questions : <%= poll.questions.length %></p>
         <p id="student-number">Students : <%= poll.students.size %></p>
-        <table id="table-students" class="table">
-            <thead>
-            <tr>
-                <th>Name</th>
-                <th>Action</th>
-            </tr>
-            </thead>
-            <tbody>
-            <% for (var student of poll.students) { %>
-            <% if (student) { %>
-            <tr>
-                <td class="email-student-poll"><%= student[0] %></td>
-                <td>
-                    <button class="btn btn-block kick-button" onclick="triggerBlacklist(this);">Kick user</button>
-                </td>
-            </tr>
-            <% } %>
-            <% } %>
-            </tbody>
-        </table>
+        <div id="table-students">
+            <%- inject('students-list', {students: poll.students}) %>
+        </div>
         <button class="btn btn-lg btn-block" id="start-poll-button">Start the poll and finish the register</button>
     </div>
 </main>
@@ -48,14 +31,13 @@
 <script type="text/javascript">
     const socket = io('/<%= poll.id %>');
 
-    socket.on('server:student:join', packet => {
-        if (packet.user !== packet.prof) {
-            $.notify(
-                {message: packet.user + ' just joined the poll'},
-                {type: 'info'}
-            );
-            joinHandler(packet);
-        }
+    socket.on('server:student:join', data => {
+        $.notify(
+            {message: 'a user just joined the poll'},
+            {type: 'info'}
+        );
+        $("#student-number").text('Students : ' + data.count);
+        $("#table-students").html(data.template);
     });
 
     socket.on('server:admin:blacklist:user', packet => {
@@ -87,8 +69,11 @@
     function triggerBlacklist(elem) {
         if (!$(elem).prop("disabled")) {
             var student = $(elem).parent().parent().find(".email-student-poll").text();
-            socket.emit('client:admin:student:remove', {
-                user: student,
+            socket.emit('client:admin:student:remove', student, () => {
+              $.notify(
+                  {message: `${student} has been blacklisted from the poll`},
+                  {type: 'danger'}
+              );
             });
             $(elem).prop("disabled", true);
         }

@@ -1,5 +1,3 @@
-const {log} = require('../../utils');
-
 class Question {
 
     /**
@@ -16,14 +14,6 @@ class Question {
         this.subject = subject;
         this.level = level;
         this.answers = answers;
-    }
-
-    addAnswer({id}) {
-        if (this.answers.indexOf(id) === -1)
-            return false;
-
-        this.answers.push(id);
-        return true;
     }
 
     /**

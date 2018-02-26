@@ -1,7 +1,9 @@
+import {render} from "../utils";
+
 const { log } = require('../utils');
 
 /**
- *
+ * bind a socket and it's namespace to the correct events according to it's permissions
  * @param provider {Object}
  * @param poll {Poll}
  */
@@ -36,6 +38,7 @@ const bindSocket = function (provider, poll) {
         */
 
         if (admin) {
+            // is him poll owner ?
             if (poll.owner !== email) {
                 // admins can't access every poll
                 socket.emit('server:poll:closed');
@@ -44,14 +47,22 @@ const bindSocket = function (provider, poll) {
             }
             bindAdmin(socket, user, poll, provider);
         } else {
+            // a student joined, add it to the list
+            // TODO send the list of users and not the new one
+            // bc if a user quit then reco, it'll be twice in the list
             provider.emit('server:student:join', {
-                user: email,
+                template: render('student-list', {
+                    students: poll.students
+                }),
                 count: poll.students.size,
             });
-
             bindStudent(socket, user, poll, provider);
         }
 
+        /**
+         * send to every new user as
+         * the initial state for the frontend
+         */
         socket.emit('server:poll:join', {
             user: email,
             length: poll.questions.length,
@@ -59,19 +70,14 @@ const bindSocket = function (provider, poll) {
             index: poll.index,
             prof: poll.owner,
         });
-
-        // event bindings
-        socket.on('disconnect', () => {
-            log(`Poll ${poll.id}, ${email} disconnected`);
-        });
     });
 };
 
 const bindAdmin = (socket, user, poll, provider) => {
     const { email } = user;
 
-    const handleNextQuestion = () => {
-        const question = poll.nextQuestion();
+    const handleChangeQuestion = (ack, index) => {
+        const question = poll.changeQuestion(index);
         if (! question) {
             // no more
             return;
@@ -79,30 +85,30 @@ const bindAdmin = (socket, user, poll, provider) => {
         log(`Poll ${poll.id} next question requested : ${question.label}`);
         // send to everyone else in the room
         provider.emit('server:question:next', question);
+        acknoledgement({answer: poll.questions[question.index].answer, ... question});
         return question;
     };
 
-    socket.on('client:admin:student:remove', packet => {
+    socket.on('client:admin:student:remove', (email, acknoledgement) => {
         log(`A user (${packet.user}) has been removed from the poll ${poll.id}`);
-
-        poll.removeStudent(packet.user);
-
-        socket.emit('server:admin:blacklist:user', packet);
+        poll.removeStudent(packet.user) && acknoledgement();
     });
 
-    socket.on('client:admin:poll:start', () => {
+    /**
+     * acknoledgement is used to send back the answer
+     * to the question to the admin without an other events
+     * it's simply a function parameter passed in front
+     * socket.io handles the transfer
+     */
+
+    socket.on('client:admin:poll:start', acknoledgement => {
         log(`Starting the polll ${poll.id}`);
         poll.start();
-        handleNextQuestion();
+        handleChangeQuestion(acknoledgement, 0);
     });
 
-    socket.on('client:admin:question:next', acknoledgement => {
-        const question = handleNextQuestion();
-        if (! question) {
-            return;
-        }
-        // send answer to the admin
-        acknoledgement({answer: poll.questions[question.index].answer, ... question});
+    socket.on('client:admin:question:change', (acknoledgement, index) => {
+        handleChangeQuestion(acknoledgement, index);
     });
 
     socket.on('client:admin:question:results', acknoledgement => {
@@ -120,14 +126,24 @@ const bindStudent = (socket, user, poll, provider) => {
         return;
     }
 
+    /**
+     * a student submitted his answer to the current question
+     */
     socket.on('client:student:answer', answer => {
-        poll.addAnswer({ email }, answer.label);
-        provider.emit('server:student:answer', {
-            user,
-            answer,
-        })
+        // ensure that he don't already answered
+        if (poll.addAnswer({ email }, answer.label)) {
+            // not already answered
+            provider.emit('server:student:answer', {
+                user,
+                answer,
+            });
+        }
+
     });
 
+    /**
+     * triggered when a user disonnect
+     */
     socket.on('disconnect', () => {
         provider.emit('server:user:disconnect');
     });

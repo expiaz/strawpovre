@@ -2,7 +2,6 @@ const fs = require('fs');
 const path = require('path');
 const ejs = require('ejs');
 
-
 /**
  * wrap a callback function into a promise
  * @param fn
@@ -10,7 +9,7 @@ const ejs = require('ejs');
  */
 const promisify = function (fn, to = null) {
     /**
-     * @return {Promise}
+     * @return {Promise<*>}
      */
     return function() {
         const args = arguments;
@@ -26,10 +25,19 @@ const promisify = function (fn, to = null) {
     }
 }
 
+/**
+ * easier console.log
+ */
 const log = function() {
     console.log(...arguments);
 };
 
+/**
+ * render a view with ejs
+ * @param view {String} the view file without .ejs extension within the public directory
+ * @param ctx {Object} the context
+ * @return {String} the html
+ */
 const render = (view, ctx) =>
     ejs.render(fs.readFileSync(path.join(__dirname, `../public/${view}.ejs`), {encoding: 'utf-8'}), ctx);
 
