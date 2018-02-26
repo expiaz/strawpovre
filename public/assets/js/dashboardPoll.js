@@ -31,7 +31,7 @@ function questionHandler(data) {
 
     Object.keys(data.answers).forEach(function (answer) {
         $("#header-question").append(
-            `<div><p>${answers[answer]}</p></div>`
+            `<div style="display: inline; margin: 0px 20px;"><h5 class="d-inline">${data.answers[answer]}</h5></div>`
         );
     });
 
