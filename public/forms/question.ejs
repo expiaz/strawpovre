@@ -36,10 +36,12 @@
         <div class="form-group template">
             <div class="row px-3">
                 <input class="form-control col-10" name="answer[]" required>
-                <input type="hidden" name="correct[]" value="0" />
                 <div class="form-check col-2">
-                    <input type="checkbox" name="correct[]" onclick="this.checked ? this.previousElementSibling.setAttribute('disabled', true) : this.previousElementSibling.removeAttribute('disabled')" value="1">
-                    Correcte
+                    <label>
+                        <input type="hidden" name="correct[]" value="0" />
+                        <input type="checkbox" name="correct[]" onclick="this.checked ? this.previousElementSibling.setAttribute('disabled', true) : this.previousElementSibling.removeAttribute('disabled')" value="1">
+                        Correcte
+                    </label>
                 </div>
                 <button style="display: none;" class="remove-template">Supprimer</button>
             </div>
