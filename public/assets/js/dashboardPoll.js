@@ -25,13 +25,15 @@ function questionHandler(data) {
     let content = $("#content");
 
     content.html(
+        "<div><button class='btn btn-primary' onclick='changeQuestion(-1)'>Back</button></div>" +
+        "<div><button class='btn btn-primary' onclick='changeQuestion(1)'>Next</button></div>" +
         "<div class='text-center' id='header-question'>" +
             "<h3>" + data.label + "</h3>" +
         "</div>");
 
     Object.keys(data.answers).forEach(function (answer) {
         $("#header-question").append(
-            `<div><p>${answers[answer]}</p></div>`
+            `<div><p>${data.answers[answer]}</p></div>`
         );
     });
 
@@ -80,6 +82,7 @@ function initChart(ctx, question) {
                 yAxes: [{
                     ticks: {
                         beginAtZero: true,
+                        max: state.students.length
                     },
                 }]
             }

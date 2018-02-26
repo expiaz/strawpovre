@@ -77,9 +77,7 @@
     });
 
     $("#start-poll-button").click(function (e) {
-        socket.emit('client:admin:poll:start', answers => {
-            // TODO answers chart
-        });
+        socket.emit('client:admin:poll:start');
     });
 
     function triggerBlacklist(elem) {
@@ -93,6 +91,11 @@
             });
             $(elem).prop("disabled", true);
         }
+    }
+
+    function changeQuestion(index) {
+        console.log(state.index, index, state.index + index);
+        socket.emit('client:admin:question:change', state.index + index);
     }
 </script>
 <script type="text/javascript" src="/assets/js/dashboardPoll.js"></script>

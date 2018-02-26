@@ -36,7 +36,7 @@ function renderQuestion(question) {
                     <div class="row mb-5 answers">
                         ${renderAnswers(question.answers)}
                     </div>
-                    <button class="btn btn-success col-12" onclick="send()">Send</button>
+                    <button class="btn btn-success col-12" onclick="send(this)">Send</button>
                     <div class="mastfoot">
                     <div class="inner">
                         <div class="badge badge-warning text-white p-2">Question ${question.id} / ${question.count}</div>
@@ -93,8 +93,8 @@ function answerClick(btnGroup, btn, answer) {
     btn.addClass('btn-warning');
 }
 
-function send() {
-    $(this).prop("disabled", true);
+function send(btn) {
+    $(btn).prop("disabled", true);
     socket.emit('client:student:answer', answerSelected);
 }
 
