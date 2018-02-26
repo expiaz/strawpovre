@@ -102,7 +102,7 @@ const bindAdmin = (socket, user, poll, provider) => {
     });
 
     socket.on('client:admin:question:results', () => {
-        provider.emit('server:question:result', poll.questions[poll.index]);
+        provider.emit('server:question:results', poll.questions[poll.index]);
     });
 };
 
