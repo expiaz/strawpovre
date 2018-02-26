@@ -45,15 +45,8 @@ const bindSocket = function (provider, poll) {
             }
             bindAdmin(socket, user, poll, provider);
         } else {
-            bindStudent(socket, user, poll, provider);
             // a student joined, add it to the list
-            // bc if a user quit then reco, it'll be twice in the list
-            provider.emit('server:student:join', {
-                template: render('student-list', {
-                    students: poll.students
-                }),
-                count: poll.students.size,
-            });
+            bindStudent(socket, user, poll, provider);
         }
 
         /**
@@ -73,7 +66,7 @@ const bindSocket = function (provider, poll) {
 const bindAdmin = (socket, user, poll, provider) => {
     const { email } = user;
 
-    const handleChangeQuestion = (acknoledgement, index) => {
+    const handleChangeQuestion = (ack, index) => {
         const question = poll.changeQuestion(index);
         if (! question) {
             // no more
@@ -82,16 +75,13 @@ const bindAdmin = (socket, user, poll, provider) => {
         log(`Poll ${poll.id} next question requested : ${question.label}`);
         // send to everyone else in the room
         provider.emit('server:question:next', question);
-        acknoledgement({answer: poll.questions[question.index].answer, ... question});
+        ack(poll.questions[question.index].answers);
         return question;
     };
 
     socket.on('client:admin:student:remove', (email, acknoledgement) => {
         log(`A user (${email}) has been removed from the poll ${poll.id}`);
         poll.removeStudent(email) && acknoledgement();
-        provider.emit('server:student:remove', {
-            user: email
-        });
     });
 
     /**
@@ -125,6 +115,13 @@ const bindStudent = (socket, user, poll, provider) => {
         socket.disconnect();
         return;
     }
+
+    provider.emit('server:student:join', {
+        template: render('student-list', {
+            students: poll.students
+        }),
+        count: poll.students.size,
+    });
 
     /**
      * a student submitted his answer to the current question

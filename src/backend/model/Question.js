@@ -41,8 +41,7 @@ class Question {
         this.answers.forEach(function (answer) {
             answers.push({
                 id: answer.id,
-                label: answer.label,
-                number: answer.number
+                label: answer.label
             });
         });
 
